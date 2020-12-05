@@ -1,8 +1,10 @@
-package com.example.pia_sismov
+package com.example.pia_sismov.presentation.account.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.pia_sismov.R
+import com.example.pia_sismov.presentation.main.view.MainActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -14,7 +16,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun login(){
-        var intent = Intent(this,MainActivity::class.java)
+        var intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
 }

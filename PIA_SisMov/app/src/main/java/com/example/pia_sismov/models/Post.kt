@@ -5,3 +5,10 @@ data class Post (
     var image: String,
     var message: String
 )
+
+data class Publicacion(
+    val title: String,
+    val image:String,
+    val message:String,
+    val draft:Boolean
+)

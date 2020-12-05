@@ -1,17 +1,15 @@
-package com.example.pia_sismov.adapters
+package com.example.pia_sismov.presentation.posts.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pia_sismov.IFragManager
 import com.example.pia_sismov.R
 import com.example.pia_sismov.models.Post
 import kotlinx.android.synthetic.main.item_view_post.view.*
 
 class PostFragmentAdapter (
-    private val list: List<Post>,
-    var fragManager: IFragManager
+    private val list: List<Post>
 ) : RecyclerView.Adapter<PostFragmentAdapter.PostViewHolder>() {
 
     inner class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
