@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/Inicio"
+        android:title="Inicio"
+        android:icon="@drawable/ic_inicio"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/Mis_Publicaciones"
+        android:title="Mis Posts"
+        android:icon="@drawable/ic_publicaciones"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/Saved"
+        android:title="Guardados"
+        android:icon="@drawable/ic_guardados"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/Perfil"
+        android:title="Perfil"
+        android:icon="@drawable/ic_perfil"
+        app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/placeholder"
+        android:title=""
+        app:showAsAction="ifRoom"/>
+
+
+</menu>
