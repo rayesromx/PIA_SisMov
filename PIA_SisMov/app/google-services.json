@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "789765754554",
+    "project_id": "pia-sismov",
+    "storage_bucket": "pia-sismov.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789765754554:android:ef774abf61f814ebaf3c83",
+        "android_client_info": {
+          "package_name": "com.example.pia_sismov"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789765754554-2kmjlkets5d3da4vlj11rbbmdn7dgk1v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsLhGZRgVHi8ynLjd1ZUEbNDPHJeld76o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789765754554-2kmjlkets5d3da4vlj11rbbmdn7dgk1v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
