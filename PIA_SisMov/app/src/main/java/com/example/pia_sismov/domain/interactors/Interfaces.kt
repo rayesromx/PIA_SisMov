@@ -1,8 +1,12 @@
 package com.example.pia_sismov.domain.interactors
 
+import com.example.pia_sismov.domain.entities.Post
+import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.presentation.account.model.LoginData
 import com.example.pia_sismov.presentation.account.model.UserRegisterData
+import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.NewPost
 
 interface IBaseUseCaseCallBack<Response> {
     fun onSuccess(data: Response?)
@@ -25,6 +29,9 @@ interface ILogOutUseCase: IBaseUseCase<Boolean> {}
 interface ILogInUseCase: IBaseUseCaseWithInput<LoginData, Boolean> {}
 interface IGetLoggedUserDataUseCase: IBaseUseCase<User> {}
 
+//post interactor
+interface ICreateNewPostUseCase: IBaseUseCaseWithInput<NewPost, Post> {}
+interface ICreateNewDocumentUseCase: IBaseUseCaseWithInput<EditableImage, PostImage> {}
 //register interactors
 
 interface IRegisterUserUseCase: IBaseUseCaseWithInput<UserRegisterData, Boolean> {}

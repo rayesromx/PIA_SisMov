@@ -24,6 +24,7 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
         btn_register.setOnClickListener {
             navigateToRegister()
         }
+        presenter.refreshUserLogStatus()
     }
 
     override fun getLayout() = R.layout.activity_login
