@@ -8,5 +8,5 @@ data class NewPost (
     val description: String= "",
     val imageList: List<EditableImage>,
     val document: EditableImage,
-    val isPublished:Boolean = false
+    val isPublished:String = ""
 )

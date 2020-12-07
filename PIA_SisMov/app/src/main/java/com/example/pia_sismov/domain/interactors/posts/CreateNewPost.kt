@@ -1,8 +1,7 @@
 package com.example.pia_sismov.domain.interactors.posts
 
 import com.example.pia_sismov.domain.entities.Post
-import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
-import com.example.pia_sismov.domain.interactors.ICreateNewPostUseCase
+import com.example.pia_sismov.domain.interactors.*
 import com.example.pia_sismov.presentation.posts.model.NewPost
 import com.example.pia_sismov.repos.IRepository
 import com.example.pia_sismov.repos.PostRepository
@@ -16,7 +15,7 @@ class CreateNewPost(
         post.title = input.title
         post.description = input.description
         post.createdBy = input.userid
-        post.isPublished = input.isPublished
+        post.datePublished = input.isPublished
 
         repository.save(post,object: IRepository.IRepositoryListener<String>{
             override fun onSuccess(data: String) {
@@ -29,5 +28,4 @@ class CreateNewPost(
             }
         })
     }
-
 }

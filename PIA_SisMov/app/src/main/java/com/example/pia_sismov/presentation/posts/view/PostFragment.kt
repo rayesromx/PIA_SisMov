@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.pia_sismov.R
+import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.presentation.posts.adapters.PostFragmentAdapter
-import com.example.pia_sismov.models.Post
 import kotlinx.android.synthetic.main.layout_posts.view.rvPosts
 
 

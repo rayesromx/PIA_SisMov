@@ -5,8 +5,7 @@ class Post: BaseEntity() {
     var createdBy: String = ""
     var title: String = ""
     var description: String = ""
-    var document_url: String = ""
-    var isPublished: Boolean = false
+    var datePublished: String = ""
 
     override fun getHastMap():HashMap<String,Any?>{
         val messageHashMap = HashMap<String, Any?>()
@@ -14,8 +13,7 @@ class Post: BaseEntity() {
         messageHashMap["createdBy"] =  createdBy
         messageHashMap["title"] =  title
         messageHashMap["description"] = description
-        messageHashMap["document_url"] = document_url
-        messageHashMap["isPublished"] = isPublished
+        messageHashMap["datePublished"] = datePublished
         return messageHashMap
     }
 }

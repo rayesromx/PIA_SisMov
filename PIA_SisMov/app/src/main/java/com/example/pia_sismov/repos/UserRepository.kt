@@ -22,10 +22,4 @@ class UserRepository: FireBaseRepository<User>("Users") {
     }
 }
 
-class PostRepository: FireBaseRepository<Post>("Posts") {
-    override fun getValue(item: DataSnapshot) = item.getValue(Post::class.java)
-}
 
-class PostImageRepository: FireBaseRepository<PostImage>("PostImagees") {
-    override fun getValue(item: DataSnapshot) = item.getValue(PostImage::class.java)
-}

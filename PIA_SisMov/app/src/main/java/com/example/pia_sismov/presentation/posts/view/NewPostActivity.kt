@@ -19,6 +19,7 @@ import com.example.pia_sismov.repos.PostImageRepository
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
 import kotlinx.android.synthetic.main.activity_new_post.*
+import java.time.LocalDateTime
 
 class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>(),INewPostContract.IView {
 
@@ -85,7 +86,7 @@ class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>()
             etxt_title.text.toString(),
             etxt_description.text.toString(),
             presenter.imageList,
-            presenter.file!!,true
+            presenter.file!!, LocalDateTime.now().toString()
         )
         presenter.publish(post)
     }
@@ -96,7 +97,7 @@ class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>()
             etxt_title.text.toString(),
             etxt_description.text.toString(),
             presenter.imageList,
-            presenter.file!!
+            presenter.file!!,""
         )
         presenter.publish(post)
     }

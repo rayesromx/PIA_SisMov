@@ -1,5 +1,6 @@
 package com.example.pia_sismov.presentation.main.view
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,10 +16,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : BaseActivity<IMainContract.IView, MainPresenter>(),IMainContract.IView {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setTheme(R.style.AppTheme)
-
 
         main_view_pager_container.adapter = ViewPager2Adapter(this)
         TabLayoutMediator(main_tab_layout, main_view_pager_container) { tab, position ->
@@ -66,11 +67,11 @@ class MainActivity : BaseActivity<IMainContract.IView, MainPresenter>(),IMainCon
         private val fragments = ArrayList<Fragment>()
 
         init {
-            fragments.add(MainHomeFragment())
-            fragments.add(MainPostsFragment())
-            fragments.add(MainDraftsFragment())
-            fragments.add(MainProfileFragment())
-            fragments.add(MainProfileFragment())
+            fragments.add(MainHomeFragment(activity))
+            fragments.add(MainPostsFragment(activity))
+            fragments.add(MainDraftsFragment(activity))
+            fragments.add(MainProfileFragment(activity))
+            fragments.add(MainProfileFragment(activity))
         }
 
         override fun getItemCount(): Int = fragments.size
