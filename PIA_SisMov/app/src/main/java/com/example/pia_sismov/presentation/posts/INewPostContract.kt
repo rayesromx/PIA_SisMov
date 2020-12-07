@@ -1,6 +1,5 @@
 package com.example.pia_sismov.presentation.posts
 
-import android.net.Uri
 import com.example.pia_sismov.presentation.posts.model.EditableImage
 import com.example.pia_sismov.presentation.posts.model.NewPost
 import com.example.pia_sismov.presentation.shared.IBasePresenter
@@ -14,6 +13,7 @@ interface INewPostContract {
         fun onImageDeleted(img:EditableImage)
         fun publishPost()
         fun publishDraft()
+        fun finishFrag()
     }
 
     interface IPresenter: IBasePresenter<IView> {

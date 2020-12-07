@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.R
+import com.example.pia_sismov.UserproigfilkeActivity
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.GetAllPublishedPostsFromOthers
 import com.example.pia_sismov.presentation.posts.IMainHomeFragmentContract
@@ -20,7 +22,8 @@ import kotlinx.android.synthetic.main.main_home_fragment.view.*
 
 class MainHomeFragment(
     private val ctx: Context
-) : BaseFragment<IMainHomeFragmentContract.IView, MainHomePresenter>(ctx),IMainHomeFragmentContract.IView {
+) : BaseFragment<IMainHomeFragmentContract.IView, MainHomePresenter>(ctx)
+    ,IMainHomeFragmentContract.IView {
 
     lateinit var adapter: MainHomeAdapter
 
@@ -40,6 +43,11 @@ class MainHomeFragment(
         rootView.rvMainAllPostsFrag.adapter = adapter
     }
 
+    override fun onViewUser(userid: String) {
+        CustomSessionState.userIdFromPost = userid
+        ctx.startActivity(Intent(ctx, UserproigfilkeActivity::class.java))
+    }
+
     override fun getFragmentLayoutID() = R.layout.main_home_fragment
 
     override fun instantiatePresenter() =
@@ -48,8 +56,10 @@ class MainHomeFragment(
         ))
 
     override fun onPostSelected(post: Post) {
+        CustomSessionState.currentPost = post
+        CustomSessionState.isEditingPost = false
+
         val intent = Intent(ctx, PostDetailActivity::class.java)
         ctx.startActivity(intent)
     }
-
 }

@@ -6,7 +6,6 @@ import com.example.pia_sismov.domain.interactors.posts.GetAllDraftPostsFromUser
 import com.example.pia_sismov.presentation.posts.IMainDraftsFragmentContract
 import com.example.pia_sismov.presentation.shared.presenter.BasePresenter
 
-
 class MainDraftPresenter(
     private val getAll : GetAllDraftPostsFromUser
 ): BasePresenter<IMainDraftsFragmentContract.IView>(), IMainDraftsFragmentContract.IPresenter {

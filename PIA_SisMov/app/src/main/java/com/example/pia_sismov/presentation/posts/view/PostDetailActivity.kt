@@ -1,12 +1,101 @@
 package com.example.pia_sismov.presentation.posts.view
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.R
+import com.example.pia_sismov.domain.entities.Post
+import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
+import com.example.pia_sismov.domain.interactors.posts.GetAllImagesFromPost
+import com.example.pia_sismov.domain.interactors.posts.SavePost
+import com.example.pia_sismov.presentation.main.view.MainActivity
+import com.example.pia_sismov.presentation.posts.IPostDetailContract
+import com.example.pia_sismov.presentation.posts.adapters.PostDetailImageListAdapter
+import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.presenter.PostDetailPresenter
+import com.example.pia_sismov.repos.PostImageRepository
+import com.example.pia_sismov.repos.PostRepository
+import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
+import kotlinx.android.synthetic.main.activity_new_post.*
+import kotlinx.android.synthetic.main.activity_post_detail.*
+import kotlinx.android.synthetic.main.activity_post_detail.view.*
 
-class PostDetailActivity : AppCompatActivity() {
+class PostDetailActivity :
+    BaseActivity<IPostDetailContract.IView, PostDetailPresenter>(), IPostDetailContract.IView {
+
+    private val pickImage = 100
+    private val PDF = 200
+    private var imageUri: Uri? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_post_detail)
+
+        etxt_detail_title.setText(CustomSessionState.currentPost.title)
+        etxt_detail_description.setText(CustomSessionState.currentPost.title)
+
+        btn_detail_save.setOnClickListener{presenter.onPostSaved(CustomSessionState.currentPost)}
+        btn_detail_publish.setOnClickListener{presenter.onPostLoaded(CustomSessionState.currentPost)}
+
+        if(!CustomSessionState.isEditingPost){
+            btn_load_detail_image.visibility = View.GONE
+            btn_load_detail_document.visibility = View.GONE
+            btn_detail_save.visibility = View.GONE
+            btn_detail_publish.visibility = View.GONE
+        }
+
+        btn_load_detail_image.setOnClickListener{
+            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(gallery, pickImage)
+        }
+        btn_load_detail_document.setOnClickListener{
+            val intent = Intent()
+            intent.setType ("*/*")
+            intent.setAction(Intent.ACTION_GET_CONTENT)
+            startActivityForResult(Intent.createChooser(intent, "Selecciona un document"), PDF)
+        }
+
+        presenter.loadImageFromPost(CustomSessionState.currentPost)
     }
+
+    override fun onImageDeleted(img: EditableImage) {
+        presenter.removeImageFromList(img)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == pickImage) {
+            imageUri = data?.data
+            val img = EditableImage("img",imageUri!!)
+            presenter.addImageToList(img)
+        } else if (resultCode == RESULT_OK && requestCode == PDF) {
+            imageUri = data?.data
+            val img = EditableImage("doc",imageUri!!)
+            presenter.loadFile(img)
+        }
+    }
+
+    override fun onUpdatedImageRV() {
+       val adapter = PostDetailImageListAdapter(presenter.imageList,this)
+        val ll = LinearLayoutManager(this)
+        ll.orientation = LinearLayoutManager.HORIZONTAL
+        rv_imgv_detail_carrousel.layoutManager = ll
+        rv_imgv_detail_carrousel.adapter = adapter
+    }
+
+    override fun finishFrag() {
+        this.onBackPressed()
+    }
+
+    override fun getLayout() = R.layout.activity_post_detail
+    override fun instantiatePresenter() = PostDetailPresenter (
+        GetAllImagesFromPost(PostImageRepository()),
+        SavePost(PostRepository(),
+            PostImageRepository()),
+        CreateNewDocument(PostImageRepository())
+
+    )
 }

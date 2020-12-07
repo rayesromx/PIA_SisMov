@@ -10,6 +10,7 @@ import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.CreateNewPost
+import com.example.pia_sismov.presentation.main.view.MainActivity
 import com.example.pia_sismov.presentation.posts.INewPostContract
 import com.example.pia_sismov.presentation.posts.adapters.NewPostImageListAdapter
 import com.example.pia_sismov.presentation.posts.model.EditableImage
@@ -21,7 +22,8 @@ import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
 import kotlinx.android.synthetic.main.activity_new_post.*
 import java.time.LocalDateTime
 
-class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>(),INewPostContract.IView {
+class NewPostActivity :
+    BaseActivity<INewPostContract.IView, NewPostPresenter>(),INewPostContract.IView {
 
     private val pickImage = 100
     private val PDF = 200
@@ -59,11 +61,11 @@ class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>()
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            val img = EditableImage(imageUri!!)
+            val img = EditableImage("img",imageUri!!)
             presenter.addImageToList(img)
         } else if (resultCode == RESULT_OK && requestCode == PDF) {
             imageUri = data?.data
-            val img = EditableImage(imageUri!!)
+            val img = EditableImage("doc",imageUri!!)
             presenter.loadFile(img)
         }
     }
@@ -86,7 +88,8 @@ class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>()
             etxt_title.text.toString(),
             etxt_description.text.toString(),
             presenter.imageList,
-            presenter.file!!, LocalDateTime.now().toString()
+            presenter.file!!,
+            LocalDateTime.now().toString()
         )
         presenter.publish(post)
     }
@@ -97,8 +100,13 @@ class NewPostActivity : BaseActivity<INewPostContract.IView, NewPostPresenter>()
             etxt_title.text.toString(),
             etxt_description.text.toString(),
             presenter.imageList,
-            presenter.file!!,""
+            presenter.file!!,
+            ""
         )
         presenter.publish(post)
+    }
+
+    override fun finishFrag() {
+        finish()
     }
 }

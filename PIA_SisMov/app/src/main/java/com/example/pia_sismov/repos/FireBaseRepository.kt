@@ -15,7 +15,7 @@ abstract class FireBaseRepository<T>(
     protected final fun getFirsTableChild(id:String) = getTableRef().child(id)
 
     override fun getAll(listener: IRepository.IRepositoryListener<List<T>>) {
-        //Thread.sleep(500)
+        Thread.sleep(100)
         getTableRef().addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val models = ArrayList<T>()
@@ -30,6 +30,28 @@ abstract class FireBaseRepository<T>(
             }
         })
     }
+
+    fun getAlll(listener: IRepository.IRepositoryListener<List<T>>) {
+        Thread.sleep(100)
+        getTableRef().orderByChild("uid").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val models = ArrayList<T>()
+                for (model in snapshot.children){
+                    val m = getValue(model)!!
+                    models.add(m)
+                }
+                listener.onSuccess(models)
+            }
+            override fun onCancelled(error: DatabaseError) {
+                listener.onError(error.message)
+            }
+        })
+    }
+
+    fun deleteById(id:String) {
+        getTableRef().child(id).removeValue()
+    }
+
 
     override fun getById(id:String, listener: IRepository.IRepositoryListener<T?>) {
         //Thread.sleep(500)

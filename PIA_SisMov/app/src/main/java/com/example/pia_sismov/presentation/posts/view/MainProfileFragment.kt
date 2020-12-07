@@ -14,8 +14,6 @@ import kotlinx.android.synthetic.main.main_profile_fragment.view.*
 class MainProfileFragment(
     private val ctx: Context
 ) : Fragment() {
-
-
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,

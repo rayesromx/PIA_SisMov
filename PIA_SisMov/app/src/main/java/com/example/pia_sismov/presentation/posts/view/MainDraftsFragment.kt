@@ -7,7 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.R
+import com.example.pia_sismov.UserproigfilkeActivity
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.GetAllDraftPostsFromUser
 import com.example.pia_sismov.presentation.posts.IMainDraftsFragmentContract
@@ -40,6 +42,11 @@ class MainDraftsFragment(
         rootView.rvMainDraftsFrag.adapter = adapter
     }
 
+    override fun onViewUser(userid: String) {
+        CustomSessionState.userIdFromPost = userid
+        ctx.startActivity(Intent(ctx, UserproigfilkeActivity::class.java))
+    }
+
     override fun getFragmentLayoutID() = R.layout.main_drafts_fragment
 
     override fun instantiatePresenter() =
@@ -48,36 +55,9 @@ class MainDraftsFragment(
         ))
 
     override fun onPostSelected(post: Post) {
+        CustomSessionState.currentPost = post
+        CustomSessionState.isEditingPost = true
         val intent = Intent(ctx, PostDetailActivity::class.java)
         ctx.startActivity(intent)
     }
-
 }
-
-/*
-* class MainDraftsFragment (
-    private val ctx: Context
-) : BaseFragment(ctx) {
-
-
-    lateinit var adapter: DraftPostFragmentAdapter
-    //private lateinit var viewModel: MainAllPostsViewModel
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        rootView = inflater.inflate(R.layout.main_drafts_fragment, container, false)
-        // initializeVM()
-
-        // rootView.btnAddNewTeamChat.setOnClickListener {fragAdmin.launchActivity(6)}
-
-        //adapter = DraftPostFragmentAdapter(viewModel.postsDraftList,fragAdmin)
-        //rootView.rvMainDraftsFrag.adapter = adapter
-        return rootView
-    }
-
-
-}
-* */

@@ -1,31 +1,59 @@
 package com.example.pia_sismov.presentation.account.view
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.example.pia_sismov.CustomSessionState
+import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.domain.interactors.login.CheckLoggedIn
-import com.example.pia_sismov.domain.interactors.login.GetLoggedUserData
 import com.example.pia_sismov.domain.interactors.login.LogIn
 import com.example.pia_sismov.domain.interactors.user.GetLoggedUser
 import com.example.pia_sismov.presentation.account.ILoginContract
+import com.example.pia_sismov.presentation.account.model.LoginData
 import com.example.pia_sismov.presentation.account.presenter.LoginPresenter
 import com.example.pia_sismov.presentation.main.view.MainActivity
 import com.example.pia_sismov.repos.UserRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
+
 class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILoginContract.IView {
+
+    lateinit var db: DataBaseHandler
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //db = DataBaseHandler(this)
         btn_login.setOnClickListener{ signIn()}
         btn_register.setOnClickListener {
             navigateToRegister()
         }
+
         presenter.refreshUserLogStatus()
+        /*if(this.isConnectedToNetwork()){
+            presenter.refreshUserLogStatus()
+            CustomSessionState.hayInteret = true
+        }
+        else{
+            if(!db.existLoginData()){
+                CustomSessionState.hayInteret = false
+                toast(this, "No hay registro del usuario en el dispositivo. Conectate a intener e inicia sesion")
+            }else{
+                navigateToMain()
+            }
+        }*/
+
     }
+
+    //fun Context.isConnectedToNetwork(): Boolean {
+   //     val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    //    return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
+   // }
 
     override fun getLayout() = R.layout.activity_login
     override fun instantiatePresenter() = LoginPresenter(
@@ -38,10 +66,11 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
         val email = etxt_email.text.toString().trim()
         val password = etxt_password.text.toString().trim()
         if(presenter.checkEmptyFields(email, password))
-            toast(this,"Revisa el email o contrasena")
+            toast(this, "Revisa el email o contrasena")
         else
             presenter.signInUserWithEmailAndPassword(email, password)
     }
+
 
     override fun navigateToMain() {
         val intent = Intent(this, MainActivity::class.java)
@@ -56,7 +85,13 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
     override fun refreshUserLogStatus(isLoggedIn: Boolean) { if(isLoggedIn)  navigateToMain() }
 
     override fun refreshUserData(loggedUser: User) {
+        //val email = etxt_email.text.toString().trim()
+        //val password = etxt_password.text.toString().trim()
+       // val loginData = LoginData(email, password)
+
+
         CustomSessionState.currentUser = loggedUser
+       // db.insertlOGINData(loginData)
         navigateToMain()
     }
 

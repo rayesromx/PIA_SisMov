@@ -5,19 +5,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pia_sismov.R
-import com.example.pia_sismov.presentation.posts.INewPostContract
 import com.example.pia_sismov.presentation.posts.IPostDetailContract
 import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_post_detail.view.*
 import kotlinx.android.synthetic.main.image_carrousel_item_editable.view.*
 
-class NewPostImageListAdapter(
+class PostDetailImageListAdapter(
     val imageList: List<EditableImage>,
-    val parentView: INewPostContract.IView
-)  : RecyclerView.Adapter<NewPostImageListAdapter.ViewHolder>(){
+    val parentView: IPostDetailContract.IView
+)  : RecyclerView.Adapter<PostDetailImageListAdapter.ViewHolder>(){
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindData(img: EditableImage) {
-            itemView.image_picture.setImageURI(img.uri)
+            if(img.url.isEmpty())
+                itemView.image_picture.setImageURI(img.uri)
+            else
+                Picasso.get().load(img.url).into(itemView.image_picture)
+
             itemView.btn_delete_image_from_list.setOnClickListener{
                 parentView.onImageDeleted(img)
             }
@@ -35,4 +40,3 @@ class NewPostImageListAdapter(
 
     override fun getItemCount() = imageList.size
 }
-

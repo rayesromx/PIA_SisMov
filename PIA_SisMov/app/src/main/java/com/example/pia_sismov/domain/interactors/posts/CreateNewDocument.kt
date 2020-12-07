@@ -18,44 +18,56 @@ class CreateNewDocument (
 ) : ICreateNewDocumentUseCase {
     override fun execute(input: EditableImage, listener: IBaseUseCaseCallBack<PostImage>) {
 
-        val storageReference = FirebaseStorage.getInstance().reference.child("Files").child(input.postId).child(input.id)
+        if(input.url.isBlank()){
+            val storageReference = FirebaseStorage.getInstance().reference
+                .child("Files").child(input.postId).child(input.id)
 
-        val uploadTask: StorageTask<*>
-        uploadTask = storageReference.putFile(input.uri!!)
-        uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>>{ task->
-            if(!task.isSuccessful){
-                listener.onError(task.exception?.message!!)
-                task.exception?.let{
-                    throw it
+            val uploadTask: StorageTask<*>
+            uploadTask = storageReference.putFile(input.uri!!)
+            uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>>{ task->
+                if(!task.isSuccessful){
+                    listener.onError(task.exception?.message!!)
+                    task.exception?.let{
+                        throw it
+                    }
+                }
+                return@Continuation storageReference.downloadUrl
+            }).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUrl = task.result
+                    val url = downloadUrl.toString()
+
+                    val post = PostImage()
+                    post.url = url
+                    post.postId = input.postId
+
+                    repository.save(post, object : IRepository.IRepositoryListener<String> {
+                        override fun onSuccess(data: String) {
+                            post.uid = data
+                            listener.onSuccess(post)
+                        }
+
+                        override fun onError(error: String) {
+                            listener.onError(error)
+                        }
+                    })
                 }
             }
-            return@Continuation storageReference.downloadUrl
-        }).addOnCompleteListener{ task->
-            if(task.isSuccessful){
-                val downloadUrl = task.result
-                val url = downloadUrl.toString()
-
-                val post = PostImage()
-                post.url = url
-                post.postId = input.postId
-
-                repository.save(post,object: IRepository.IRepositoryListener<String>{
-                    override fun onSuccess(data: String) {
-                        post.uid = data
-                        listener.onSuccess(post)
-                    }
-
-                    override fun onError(error: String) {
-                        listener.onError(error)
-                    }
-                })
-            }
         }
+        else{
+            val post = PostImage()
+            post.url = input.url
+            post.postId =  input.postId
+            repository.save(post, object : IRepository.IRepositoryListener<String> {
+                override fun onSuccess(data: String) {
+                    post.uid = data
+                    listener.onSuccess(post)
+                }
 
-
-
-
-
+                override fun onError(error: String) {
+                    listener.onError(error)
+                }
+            })
+        }
     }
-
 }

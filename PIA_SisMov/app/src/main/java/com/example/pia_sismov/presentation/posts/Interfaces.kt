@@ -10,6 +10,7 @@ interface IMainHomeFragmentContract {
     interface IView: IBaseView {
         fun onPostSelected(post: Post)
         fun onPostsLoaded(posts:List<Post>)
+        fun onViewUser(userid:String)
     }
 
     interface IPresenter: IBasePresenter<IView> {
@@ -21,6 +22,7 @@ interface IMainDraftsFragmentContract {
     interface IView: IBaseView {
         fun onPostSelected(post: Post)
         fun onPostsLoaded(posts:List<Post>)
+        fun onViewUser(userid:String)
     }
 
     interface IPresenter: IBasePresenter<IView> {
@@ -32,6 +34,7 @@ interface IMainPostsFragmentContract {
     interface IView: IBaseView {
         fun onPostSelected(post: Post)
         fun onPostsLoaded(posts:List<Post>)
+        fun onViewUser(userid:String)
     }
 
     interface IPresenter: IBasePresenter<IView> {
@@ -39,12 +42,19 @@ interface IMainPostsFragmentContract {
     }
 }
 
-interface IMainProfileFragmentContract {
+interface IPostDetailContract {
     interface IView: IBaseView {
-
+        fun onImageDeleted(img:EditableImage)
+        fun onUpdatedImageRV()
+        fun finishFrag()
     }
 
     interface IPresenter: IBasePresenter<IView> {
-
+        fun loadImageFromPost(post:Post)
+        fun addImageToList(image: EditableImage)
+        fun removeImageFromList(image: EditableImage)
+        fun onPostSaved(post: Post)
+        fun onPostLoaded(post: Post)
+        fun loadFile(file: EditableImage)
     }
 }
