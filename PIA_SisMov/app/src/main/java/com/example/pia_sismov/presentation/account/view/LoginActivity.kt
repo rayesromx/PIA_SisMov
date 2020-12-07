@@ -28,32 +28,33 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //db = DataBaseHandler(this)
+        db = DataBaseHandler(this)
         btn_login.setOnClickListener{ signIn()}
         btn_register.setOnClickListener {
             navigateToRegister()
         }
 
-        presenter.refreshUserLogStatus()
-        /*if(this.isConnectedToNetwork()){
+        //presenter.refreshUserLogStatus()
+        if(this.isConnectedToNetwork()){
             presenter.refreshUserLogStatus()
             CustomSessionState.hayInteret = true
         }
         else{
+            CustomSessionState.hayInteret = false
             if(!db.existLoginData()){
-                CustomSessionState.hayInteret = false
                 toast(this, "No hay registro del usuario en el dispositivo. Conectate a intener e inicia sesion")
             }else{
+
                 navigateToMain()
             }
-        }*/
+        }
 
     }
 
-    //fun Context.isConnectedToNetwork(): Boolean {
-   //     val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-    //    return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
-   // }
+   fun Context.isConnectedToNetwork(): Boolean {
+       val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+       return connectivityManager?.activeNetworkInfo?.isConnectedOrConnecting() ?: false
+   }
 
     override fun getLayout() = R.layout.activity_login
     override fun instantiatePresenter() = LoginPresenter(
@@ -73,6 +74,10 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
 
 
     override fun navigateToMain() {
+
+        if(!CustomSessionState.hayInteret){
+            CustomSessionState.currentUser = db.readUserData()[0]
+        }
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
         startActivity(intent)
@@ -85,13 +90,12 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
     override fun refreshUserLogStatus(isLoggedIn: Boolean) { if(isLoggedIn)  navigateToMain() }
 
     override fun refreshUserData(loggedUser: User) {
-        //val email = etxt_email.text.toString().trim()
-        //val password = etxt_password.text.toString().trim()
-       // val loginData = LoginData(email, password)
+        val email = etxt_email.text.toString().trim()
+        val password = etxt_password.text.toString().trim()
+        val loginData = LoginData(email, password)
 
-
+        db.insertlOGINData(loginData, loggedUser)
         CustomSessionState.currentUser = loggedUser
-       // db.insertlOGINData(loginData)
         navigateToMain()
     }
 

@@ -19,8 +19,9 @@ class LoginPresenter(
             override fun onSuccess(data: Boolean?) {
                 if(isViewAttached()){
                     view?.hideProgressBar()
-                    if(data!!)
+                    if(data!!) {
                         view?.navigateToMain()
+                    }
                     else
                         view?.showError("Error al tratar de ingresar")
                 }
