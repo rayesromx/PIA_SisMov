@@ -1,5 +1,6 @@
 package com.example.pia_sismov.domain.interactors.register
 
+import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.IRegisterUserUseCase
 import com.example.pia_sismov.domain.mappers.register.GetUserFromUserRegister
@@ -10,7 +11,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 
 class RegisterUser: IRegisterUserUseCase {
-    override fun execute(input: UserRegisterData, listener: IBaseUseCaseCallBack<Boolean>) {
+    override fun execute(input: UserRegisterData, listener: IBaseUseCaseCallBack<User>) {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(input.email,input.pass1).addOnCompleteListener{
             if(it.isSuccessful){
                 val firebaseUserID = FirebaseAuth.getInstance().currentUser?.uid
@@ -25,9 +26,8 @@ class RegisterUser: IRegisterUserUseCase {
                             .setDisplayName(user.name).build()
                         FirebaseAuth.getInstance().currentUser?.updateProfile(profileUpdates)?.addOnCompleteListener{ itUpdate ->
                             if(itUpdate.isSuccessful){
-                                listener.onSuccess(true)
+                                listener.onSuccess(user)
                             }else{
-                                listener.onSuccess(false)
                                 listener.onError(itUpdate.exception?.message!!)
                             }
                         }

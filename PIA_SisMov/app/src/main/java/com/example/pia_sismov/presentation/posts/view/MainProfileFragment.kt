@@ -11,6 +11,7 @@ import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.login.LogOut
 import com.example.pia_sismov.presentation.main.IMainContract
+import com.squareup.picasso.Picasso
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
 import kotlinx.android.synthetic.main.main_profile_fragment.view.*
 
@@ -35,6 +36,10 @@ class MainProfileFragment(
                 }
             })
             parentView.finishActivity()
+        }
+
+        if(!CustomSessionState.currentUser.profilepic.isBlank()){
+            Picasso.get().load(CustomSessionState.currentUser.profilepic).into(view.profilepic)
         }
 
         view.profile_email.setText(CustomSessionState.currentUser.email)

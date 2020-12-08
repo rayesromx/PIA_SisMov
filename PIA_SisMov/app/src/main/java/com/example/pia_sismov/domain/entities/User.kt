@@ -5,6 +5,7 @@ class User: BaseEntity() {
     var lastName: String = ""
     var email: String = ""
     var phone: String = ""
+    var profilepic: String = ""
 
     override fun getHastMap():HashMap<String,Any?>{
         val messageHashMap = HashMap<String, Any?>()
@@ -13,6 +14,7 @@ class User: BaseEntity() {
         messageHashMap["lastName"] =  lastName
         messageHashMap["email"] = email
         messageHashMap["phone"] = phone
+        messageHashMap["profilepic"] = profilepic
         return messageHashMap
     }
 }

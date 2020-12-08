@@ -196,6 +196,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         val result = database.insert(IMG_TABLENAME, null, contentValues)
         database.close()
     }
+
     fun readImageData(post:Post): MutableList<EditableImage> {
         val list: MutableList<EditableImage> = ArrayList()
         val db = this.readableDatabase

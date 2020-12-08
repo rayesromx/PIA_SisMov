@@ -4,6 +4,7 @@ import android.net.Uri
 import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.ICreateNewDocumentUseCase
+import com.example.pia_sismov.domain.interactors.IUploadImagePPUseCase
 import com.example.pia_sismov.presentation.posts.model.EditableImage
 import com.example.pia_sismov.repos.IRepository
 import com.example.pia_sismov.repos.PostImageRepository
@@ -69,6 +70,34 @@ class CreateNewDocument (
                     listener.onError(error)
                 }
             })
+        }
+    }
+}
+
+
+class UploadPP (
+    private val repository: PostImageRepository
+) : IUploadImagePPUseCase {
+    override fun execute(input: EditableImage, listener: IBaseUseCaseCallBack<String>) {
+        val storageReference = FirebaseStorage.getInstance().reference
+            .child("Files").child("UsersPPs").child(input.postId)
+
+        val uploadTask: StorageTask<*>
+        uploadTask = storageReference.putFile(input.uri!!)
+        uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>>{ task->
+            if(!task.isSuccessful){
+                listener.onError(task.exception?.message!!)
+                task.exception?.let{
+                    throw it
+                }
+            }
+            return@Continuation storageReference.downloadUrl
+        }).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUrl = task.result
+                val url = downloadUrl.toString()
+                listener.onSuccess(url)
+            }
         }
     }
 }

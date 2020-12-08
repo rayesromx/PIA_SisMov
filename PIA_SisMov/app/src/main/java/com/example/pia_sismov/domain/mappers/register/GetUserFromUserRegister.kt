@@ -12,6 +12,7 @@ class GetUserFromUserRegister(
         user.lastName = userRegister.lastName
         user.email = userRegister.email
         user.phone = userRegister.phone
+        user.profilepic = userRegister.pp
         return user
     }
 }

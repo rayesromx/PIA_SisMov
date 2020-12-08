@@ -6,6 +6,7 @@ import android.widget.Toast
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.repos.IRepository
 import com.example.pia_sismov.repos.UserRepository
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_userproigfilke.*
 import kotlinx.android.synthetic.main.main_profile_fragment.view.*
 
@@ -24,6 +25,9 @@ class UserproigfilkeActivity : AppCompatActivity() {
                     profile_phone.setText("N/D")
                 else
                     profile_phone.setText(data!!.phone)
+
+                if(!data.profilepic.isBlank())
+                    Picasso.get().load(data.profilepic).into(userProfilePic)
             }
 
             override fun onError(error: String) {

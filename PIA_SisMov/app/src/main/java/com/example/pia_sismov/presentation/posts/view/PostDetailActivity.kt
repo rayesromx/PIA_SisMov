@@ -158,6 +158,5 @@ class PostDetailActivity :
         SavePost(PostRepository(),
             PostImageRepository()),
         CreateNewDocument(PostImageRepository())
-
     )
 }

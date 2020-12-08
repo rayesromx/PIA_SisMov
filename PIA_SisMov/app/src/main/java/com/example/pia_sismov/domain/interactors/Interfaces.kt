@@ -33,6 +33,7 @@ interface IGetLoggedUserDataUseCase: IBaseUseCase<User> {}
 interface ICreateNewPostUseCase: IBaseUseCaseWithInput<NewPost, Post> {}
 interface ISavePostUseCase: IBaseUseCaseWithInput<Post, Post> {}
 interface ICreateNewDocumentUseCase: IBaseUseCaseWithInput<EditableImage, PostImage> {}
+interface IUploadImagePPUseCase: IBaseUseCaseWithInput<EditableImage, String> {}
 
 interface IGetAllPublishedPostsFromOtherUseCase: IBaseUseCase<List<Post>> {}
 interface IGetAllPublishedPostsFromUserUseCase: IBaseUseCase<List<Post>> {}
@@ -43,7 +44,7 @@ interface IGetAllDraftPostsFromUserUseCase: IBaseUseCase<List<Post>> {}
 interface IGetAllImagesFromPostUseCase: IBaseUseCaseWithInput<Post, List<PostImage>>
 //register interactors
 
-interface IRegisterUserUseCase: IBaseUseCaseWithInput<UserRegisterData, Boolean> {}
+interface IRegisterUserUseCase: IBaseUseCaseWithInput<UserRegisterData, User> {}
 
 //user interactors
 
