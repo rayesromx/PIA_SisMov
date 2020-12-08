@@ -34,9 +34,6 @@ val COL_BLOBBMP = "blobbmp"
 val COL_POSTID = "postid"
 val COL_TYPE = "type"
 
-
-
-
 class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
     context, DATABASENAME, null,
     1
@@ -71,10 +68,11 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         onCreate(db);
     }
-    fun existLoginData(): Boolean {
+
+    fun existLoginData(user:User): Boolean {
         val db = writableDatabase
-        val selectQuery = "SELECT  * FROM $USESRS_TABLENAME"
-        val cursor = db.rawQuery(selectQuery, null)
+        val selectQuery = "SELECT  * FROM $USESRS_TABLENAME WHERE " + COL_UID + " =?"
+        val cursor = db.rawQuery(selectQuery, arrayOf(user.uid))
         var exists = false;
         if (cursor != null) {
             cursor.moveToFirst()
@@ -85,6 +83,25 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
         cursor.close()
         return exists
     }
+
+    fun getUserByLoginData(loginData:LoginData): User {
+        val db = writableDatabase
+        val selectQuery = "SELECT  * FROM $USESRS_TABLENAME WHERE " + COL_EMAIL + " =?"
+        val cursor = db.rawQuery(selectQuery, arrayOf(loginData.email))
+        val user = User()
+
+        if (cursor != null) {
+            cursor.moveToFirst()
+            user.email = cursor.getString(cursor.getColumnIndex(COL_EMAIL))
+            user.name = cursor.getString(cursor.getColumnIndex(COL_NAME))
+            user.lastName = cursor.getString(cursor.getColumnIndex(COL_LASTNAME))
+            user.phone = cursor.getString(cursor.getColumnIndex(COL_PHONE))
+            user.uid = cursor.getString(cursor.getColumnIndex(COL_UID))
+        }
+        cursor.close()
+        return user
+    }
+
     fun insertlOGINData(login: LoginData, user: User) {
         val database = this.writableDatabase
         val contentValues = ContentValues()
@@ -105,11 +122,15 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
         contentValues.put(COL_NAME, user.name)
         contentValues.put(COL_LASTNAME, user.lastName)
         contentValues.put(COL_PHONE, user.phone)
-        contentValues.put(COL_ID, user.uid)
-        val _success = database.delete(USESRS_TABLENAME, COL_UID + "=?", arrayOf(user.uid)).toLong()
+        contentValues.put(COL_UID, user.uid)
+        try{
+            val _success = database.update(USESRS_TABLENAME,contentValues, COL_UID + "=?", arrayOf(user.uid)).toLong()
+        }catch (ex:Exception){
+            val msg = ex.message
+        }
         //val result = database.update(USESRS_TABLENAME,contentValues, COL_UID + "=? ",arrayOf(user.uid))
         database.close()
-        insertlOGINData(login, user)
+        //insertlOGINData(login, user)
     }
     fun readLoginData(): MutableList<LoginData> {
         val list: MutableList<LoginData> = ArrayList()
@@ -117,10 +138,13 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
         val query = "Select * from $USESRS_TABLENAME"
         val result = db.rawQuery(query, null)
         if (result.moveToFirst()) {
-            val user = LoginData("", "")
-            user.email = result.getString(result.getColumnIndex(COL_EMAIL))
-            user.password = result.getString(result.getColumnIndex(COL_PWS))
-            list.add(user)
+            do{
+                val user = LoginData("", "")
+                user.email = result.getString(result.getColumnIndex(COL_EMAIL))
+                user.password = result.getString(result.getColumnIndex(COL_PWS))
+                list.add(user)
+            }while (result.moveToNext())
+
         }
         result.close()
         return list
@@ -141,6 +165,22 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
         }
         result.close()
         return list
+    }
+
+    fun getUserById(userId:String): User {
+        val user = User()
+        val db = this.readableDatabase
+        val query = "Select * from $USESRS_TABLENAME WHERE " + COL_UID + " =?"
+        val result = db.rawQuery(query, arrayOf(userId))
+        if (result.moveToFirst()) {
+            user.email = result.getString(result.getColumnIndex(COL_EMAIL))
+            user.name = result.getString(result.getColumnIndex(COL_NAME))
+            user.lastName = result.getString(result.getColumnIndex(COL_LASTNAME))
+            user.phone = result.getString(result.getColumnIndex(COL_PHONE))
+            user.uid = result.getString(result.getColumnIndex(COL_UID))
+        }
+        result.close()
+        return user
     }
 
 
