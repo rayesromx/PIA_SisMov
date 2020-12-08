@@ -88,7 +88,7 @@ class PostDetailActivity :
             btn_detail_save.visibility = View.GONE
             btn_detail_publish.visibility = View.GONE
             etxt_detail_title.isEnabled = false
-            etxt_detail_title.isEnabled = false
+            etxt_detail_description.isEnabled = false
 
         }else{
             txt_created_by.visibility = View.GONE
