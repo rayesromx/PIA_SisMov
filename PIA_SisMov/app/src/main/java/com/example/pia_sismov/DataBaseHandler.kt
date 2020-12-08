@@ -82,7 +82,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         contentValues.put(COL_NAME, user.name)
         contentValues.put(COL_LASTNAME, user.lastName)
         contentValues.put(COL_PHONE, user.phone)
-        contentValues.put(COL_UID, user.uid)
+        contentValues.put(COL_ID, user.uid)
         val result = database.update(USESRS_TABLENAME,contentValues,"ID <> 0 ",null)
         database.close()
     }
@@ -158,7 +158,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
 
     fun deletePost(post:Post): Boolean {
         val db = this.writableDatabase
-        val _success = db.delete(POSTS_TABLENAME, COL_UID + "=?", arrayOf(post.uid.toString())).toLong()
+        val _success = db.delete(POSTS_TABLENAME, COL_ID + "=?", arrayOf(post.uid)).toLong()
         db.close()
         return Integer.parseInt("$_success") != -1
     }
