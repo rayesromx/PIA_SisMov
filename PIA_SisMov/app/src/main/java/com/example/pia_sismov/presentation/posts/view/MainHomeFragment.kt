@@ -17,7 +17,6 @@ import com.example.pia_sismov.presentation.posts.adapters.MainHomeAdapter
 import com.example.pia_sismov.presentation.posts.presenter.MainHomePresenter
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
-import kotlinx.android.synthetic.main.main_home_fragment.*
 import kotlinx.android.synthetic.main.main_home_fragment.view.*
 
 
@@ -36,7 +35,7 @@ class MainHomeFragment(
         super.onCreateView(inflater, container, savedInstanceState)
 
         presenter.loadAllPublishedPosts()
-        if(!CustomSessionState.hayInteret){
+        if(!CustomSessionState.hayInternet){
             rootView.txtNODATAh.visibility = View.VISIBLE
             rootView.txtNODATAh.text = "Sin internet"
         }

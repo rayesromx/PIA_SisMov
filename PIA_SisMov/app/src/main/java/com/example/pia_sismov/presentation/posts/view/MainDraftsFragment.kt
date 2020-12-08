@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.DataBaseHandler
@@ -19,8 +20,6 @@ import com.example.pia_sismov.presentation.posts.presenter.MainDraftPresenter
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
 import kotlinx.android.synthetic.main.main_drafts_fragment.view.*
-import kotlinx.android.synthetic.main.main_home_fragment.*
-import kotlinx.android.synthetic.main.main_home_fragment.view.*
 
 class MainDraftsFragment(
     private val ctx: Context
@@ -37,7 +36,7 @@ class MainDraftsFragment(
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         db = DataBaseHandler(ctx)
-        if(!CustomSessionState.hayInteret)
+        if(!CustomSessionState.hayInternet)
             onPostsLoaded(ArrayList<Post>())
         else
             presenter.loadAllUserDraftPosts()
@@ -72,10 +71,23 @@ class MainDraftsFragment(
             PostRepository()
         ))
 
+    val newpost = 1000
+
     override fun onPostSelected(post: Post) {
         CustomSessionState.currentPost = post
         CustomSessionState.isEditingPost = true
         val intent = Intent(ctx, PostDetailActivity::class.java)
-        ctx.startActivity(intent)
+        (ctx as AppCompatActivity).startActivityForResult(intent,newpost)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == newpost) {
+            if(!CustomSessionState.hayInternet)
+                onPostsLoaded(ArrayList<Post>())
+            else
+                presenter.loadAllUserDraftPosts()
+        }
+    }
+
 }

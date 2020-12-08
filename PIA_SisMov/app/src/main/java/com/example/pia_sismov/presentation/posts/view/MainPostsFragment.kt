@@ -16,8 +16,6 @@ import com.example.pia_sismov.presentation.posts.adapters.MainPostsFragmentAdapt
 import com.example.pia_sismov.presentation.posts.presenter.MainPostsPresenter
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
-import kotlinx.android.synthetic.main.main_home_fragment.*
-import kotlinx.android.synthetic.main.main_posts_fragment.*
 import kotlinx.android.synthetic.main.main_posts_fragment.view.*
 
 class MainPostsFragment(
@@ -35,7 +33,7 @@ class MainPostsFragment(
         super.onCreateView(inflater, container, savedInstanceState)
 
         presenter.loadAllUserPosts()
-        if(!CustomSessionState.hayInteret){
+        if(!CustomSessionState.hayInternet){
             rootView.txtNODATAp.visibility = View.VISIBLE
             rootView.txtNODATAp.text = "Sin internet"
         }

@@ -7,6 +7,6 @@ object CustomSessionState {
     var currentUser: User = User()
     var currentPost: Post = Post()
     var isEditingPost = false
-    var hayInteret = false
+    var hayInternet = false
     var userIdFromPost:String = ""
 }

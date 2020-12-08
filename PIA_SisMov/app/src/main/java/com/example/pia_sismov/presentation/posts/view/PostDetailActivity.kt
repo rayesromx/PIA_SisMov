@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
+import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.GetAllImagesFromPost
 import com.example.pia_sismov.domain.interactors.posts.SavePost
@@ -36,7 +37,36 @@ class PostDetailActivity :
         etxt_detail_description.setText(CustomSessionState.currentPost.description)
         txt_created_by.setText("Creado por " + CustomSessionState.currentPost.createdByName)
 
-        btn_detail_save.setOnClickListener{presenter.onPostSaved(CustomSessionState.currentPost)}
+        btn_detail_save.setOnClickListener{
+            CustomSessionState.currentPost.title =  etxt_detail_title.text.toString()
+            CustomSessionState.currentPost.description =  etxt_detail_description.text.toString()
+
+            if(!CustomSessionState.hayInternet){
+                db.insertPost(CustomSessionState.currentPost)
+                val posts = db.readpOSTData()
+                var postFromDb = Post()
+                for (p in posts){
+                    if(p.title == CustomSessionState.currentPost.title && p.description == CustomSessionState.currentPost.description){
+                        postFromDb = p
+                    }
+                }
+                //guidardar en db las imagenes
+                for (img in presenter.imageList){
+                    img.postId = postFromDb.uid
+                    db.insertImage(img)
+                }
+                //guardar la referencia del dpocumento
+                if(presenter.file!=null) {
+                    presenter.file!!.postId = postFromDb.uid
+                    db.insertImage(presenter.file!!)
+                }
+            }
+            else
+            presenter.onPostSaved(CustomSessionState.currentPost)
+        }
+
+
+
         btn_detail_publish.setOnClickListener{
             try {
                 val parsedInt = CustomSessionState.currentPost.uid.toInt()
@@ -44,8 +74,11 @@ class PostDetailActivity :
             } catch (nfe: NumberFormatException) {
                 // not a valid int
             }
-            CustomSessionState.currentPost.uid = ""
+            CustomSessionState.currentPost.title =  etxt_detail_title.text.toString()
+            CustomSessionState.currentPost.description =  etxt_detail_description.text.toString()
+            //CustomSessionState.currentPost.uid = ""
             CustomSessionState.currentPost.createdBy = CustomSessionState.currentUser.uid
+            CustomSessionState.currentPost.createdByName = CustomSessionState.currentUser.name + " " + CustomSessionState.currentUser.lastName
             presenter.onPostLoaded(CustomSessionState.currentPost)
         }
 
@@ -54,15 +87,11 @@ class PostDetailActivity :
             btn_load_detail_document.visibility = View.GONE
             btn_detail_save.visibility = View.GONE
             btn_detail_publish.visibility = View.GONE
+            etxt_detail_title.isEnabled = false
+            etxt_detail_title.isEnabled = false
+
         }else{
             txt_created_by.visibility = View.GONE
-        }
-
-        if(!CustomSessionState.hayInteret){
-
-            btn_load_detail_image.isEnabled = false
-            btn_load_detail_document.isEnabled = false
-            btn_detail_publish.isEnabled = false
         }
 
         btn_load_detail_image.setOnClickListener{
@@ -76,7 +105,13 @@ class PostDetailActivity :
             startActivityForResult(Intent.createChooser(intent, "Selecciona un document"), PDF)
         }
 
-        presenter.loadImageFromPost(CustomSessionState.currentPost)
+        if(!CustomSessionState.hayInternet){
+            btn_detail_publish.isEnabled = false
+            onUpdatedImageRV()
+        }
+        else {
+            presenter.loadImageFromPost(CustomSessionState.currentPost)
+        }
     }
 
     override fun onImageDeleted(img: EditableImage) {
@@ -97,6 +132,15 @@ class PostDetailActivity :
     }
 
     override fun onUpdatedImageRV() {
+        var images = db.readImageData(CustomSessionState.currentPost)
+        var imagedType = ArrayList<EditableImage>()
+        for(img in images){
+            if(img.type == "img"){
+                val im = EditableImage("img",img.uri)
+                imagedType.add(im)
+            }
+        }
+        presenter.imageList.addAll(imagedType)
        val adapter = PostDetailImageListAdapter(presenter.imageList,this)
         val ll = LinearLayoutManager(this)
         ll.orientation = LinearLayoutManager.HORIZONTAL

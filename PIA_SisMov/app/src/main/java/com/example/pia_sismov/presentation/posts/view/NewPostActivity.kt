@@ -11,7 +11,6 @@ import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.CreateNewPost
-import com.example.pia_sismov.presentation.main.view.MainActivity
 import com.example.pia_sismov.presentation.posts.INewPostContract
 import com.example.pia_sismov.presentation.posts.adapters.NewPostImageListAdapter
 import com.example.pia_sismov.presentation.posts.model.EditableImage
@@ -39,12 +38,14 @@ class NewPostActivity :
         btn_publish.setOnClickListener{publishPost()}
         btn_save.setOnClickListener{publishDraft()}
 
-        if(!CustomSessionState.hayInteret){
+        if(!CustomSessionState.hayInternet){
             db = DataBaseHandler(this)
             btn_publish.isEnabled = false
-            btn_load_image.isEnabled = false
-            btn_load_document.isEnabled = false
+            //btn_load_image.isEnabled = false
+            //btn_load_document.isEnabled = false
         }
+
+
     }
 
     override fun getLayout() = R.layout.activity_new_post
@@ -92,6 +93,7 @@ class NewPostActivity :
     }
 
     override fun publishPost(){
+
         var post = NewPost(
             CustomSessionState.currentUser.uid,
             etxt_title.text.toString(),
@@ -112,12 +114,33 @@ class NewPostActivity :
             presenter.file!!,
             ""
         )
-        if(!CustomSessionState.hayInteret){
+
+        if(!CustomSessionState.hayInternet){
             var p = Post()
             p.description = post.description
             p.title = post.title
             p.uid = "local"
             db.insertPost(p)
+            val posts = db.readpOSTData()
+
+            var postFromDb = Post()
+            for (pdb in posts){
+                if(pdb.title == p.title && pdb.description == p.description){
+                    postFromDb = pdb
+                    break
+                }
+            }
+            db.readImageData(p)
+            //guidardar en db las imagenes
+            for (img in presenter.imageList){
+                img.postId = postFromDb.uid
+                db.insertImage(img)
+            }
+            //guardar la referencia del dpocumento
+            if(presenter.file!=null) {
+                presenter.file!!.postId = postFromDb.uid
+                db.insertImage(presenter.file!!)
+            }
             finishFrag()
         }
         else

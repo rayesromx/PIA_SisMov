@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
@@ -37,10 +36,10 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
         //presenter.refreshUserLogStatus()
         if(this.isConnectedToNetwork()){
             presenter.refreshUserLogStatus()
-            CustomSessionState.hayInteret = true
+            CustomSessionState.hayInternet = true
         }
         else{
-            CustomSessionState.hayInteret = false
+            CustomSessionState.hayInternet = false
             if(!db.existLoginData()){
                 toast(this, "No hay registro del usuario en el dispositivo. Conectate a intener e inicia sesion")
             }else{
@@ -75,8 +74,12 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
 
     override fun navigateToMain() {
 
-        if(!CustomSessionState.hayInteret){
-            CustomSessionState.currentUser = db.readUserData()[0]
+        if(!CustomSessionState.hayInternet){
+            if(db.existLoginData())
+                CustomSessionState.currentUser = db.readUserData()[0]
+            else{
+                presenter.getLoggedUserData()
+            }
         }
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
@@ -94,7 +97,10 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
         val password = etxt_password.text.toString().trim()
         val loginData = LoginData(email, password)
 
-        db.insertlOGINData(loginData, loggedUser)
+        if(!db.existLoginData())
+            db.insertlOGINData(loginData, loggedUser)
+        else
+            db.udpateLogin(loginData, loggedUser)
         CustomSessionState.currentUser = loggedUser
         navigateToMain()
     }

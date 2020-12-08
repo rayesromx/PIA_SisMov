@@ -11,6 +11,7 @@ import com.example.pia_sismov.domain.interactors.posts.SavePost
 import com.example.pia_sismov.presentation.posts.IPostDetailContract
 import com.example.pia_sismov.presentation.posts.model.EditableImage
 import com.example.pia_sismov.presentation.shared.presenter.BasePresenter
+import java.lang.Exception
 import java.time.LocalDateTime
 
 class PostDetailPresenter(
@@ -61,11 +62,24 @@ class PostDetailPresenter(
 
     override fun onPostSaved(post: Post) {
         post.datePublished =""
+        try {
+            val parsedInt =  post.uid.toInt()
+            post.uid =""
+        }catch(ex:Exception){
+
+        }
+
         guardarPost(post)
     }
 
     override fun onPostLoaded(post: Post) {
         post.datePublished =  LocalDateTime.now().toString()
+        try {
+            val parsedInt =  post.uid.toInt()
+            post.uid =""
+        }catch(ex:Exception){
+
+        }
         guardarPost(post)
     }
 

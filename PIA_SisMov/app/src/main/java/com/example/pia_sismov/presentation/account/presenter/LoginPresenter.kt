@@ -65,15 +65,6 @@ class LoginPresenter(
                 }
 
                 CustomSessionState.currentUser = data!!
-                /*val updateUser = UpdateUser(UserRepository())
-                CustomSessionState.loggedUser.status = "online"
-                updateUser.execute(CustomSessionState.loggedUser, object: IBaseUseCaseCallBack<User>{
-                    override fun onSuccess(data: User?) {
-                    }
-                    override fun onError(error: String) {
-                        view!!.showError(error)
-                    }
-                })*/
                 view!!.refreshUserData(data)
             }
 
