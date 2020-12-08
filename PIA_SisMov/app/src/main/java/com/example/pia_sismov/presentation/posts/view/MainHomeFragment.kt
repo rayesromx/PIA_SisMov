@@ -19,11 +19,9 @@ import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
 import kotlinx.android.synthetic.main.main_home_fragment.view.*
 
-
 class MainHomeFragment(
     private val ctx: Context
-) : BaseFragment<IMainHomeFragmentContract.IView, MainHomePresenter>(ctx)
-    ,IMainHomeFragmentContract.IView {
+) : BaseFragment<IMainHomeFragmentContract.IView, MainHomePresenter>(ctx) ,IMainHomeFragmentContract.IView {
 
     lateinit var adapter: MainHomeAdapter
 
@@ -33,12 +31,21 @@ class MainHomeFragment(
             savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-
         presenter.loadAllPublishedPosts()
         if(!CustomSessionState.hayInternet){
             rootView.txtNODATAh.visibility = View.VISIBLE
             rootView.txtNODATAh.text = "Sin internet"
         }
+
+        rootView.btn_search_posts.setOnClickListener{
+            var postsToBeFilters = ArrayList<Post>()
+            for(post in presenter.postsToBeFiltered){
+                if(post.title.toLowerCase().contains(rootView.etxt_name_search.text.toString().toLowerCase()))
+                    postsToBeFilters.add(post)
+            }
+            onPostsLoaded(postsToBeFilters)
+        }
+
         return rootView
     }
 
