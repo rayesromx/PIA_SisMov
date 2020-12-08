@@ -120,25 +120,24 @@ class NewPostActivity :
             p.description = post.description
             p.title = post.title
             p.uid = "local"
-            db.insertPost(p)
-            val posts = db.readpOSTData()
+            val postnewid = db.insertPost(p)
+            //val posts = db.readpOSTData()
 
-            var postFromDb = Post()
-            for (pdb in posts){
-                if(pdb.title == p.title && pdb.description == p.description){
-                    postFromDb = pdb
-                    break
-                }
-            }
-            db.readImageData(p)
+           //ar postFromDb = Post()
+            //for (pdb in posts){
+            //    if(pdb.title == p.title && pdb.description == p.description){
+            //        postFromDb = pdb
+            //        break
+            //    }
+           // }
             //guidardar en db las imagenes
             for (img in presenter.imageList){
-                img.postId = postFromDb.uid
+                img.postId = postnewid.toString()
                 db.insertImage(img)
             }
             //guardar la referencia del dpocumento
             if(presenter.file!=null) {
-                presenter.file!!.postId = postFromDb.uid
+                presenter.file!!.postId = postnewid.toString()
                 db.insertImage(presenter.file!!)
             }
             finishFrag()

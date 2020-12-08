@@ -24,14 +24,8 @@ class PostDetailImageListAdapter(
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindData(img: EditableImage) {
             if(img.url.isEmpty()){
-                val path = img.uri.path
-                val fl = File(path)
-                val flstr = fl.toString()
-                var newuri = Uri.fromFile(fl)
-                //fl.
-                //Glide.with(context).load(new File(uri.getPath())).into(imageView);
-               itemView.image_picture.setImageURI( img.uri)
-               // Picasso.get().load(flstr).into(itemView.image_picture)
+
+               itemView.image_picture.setImageBitmap( img.bmpImage)
             }else
                 Picasso.get().load(img.url).into(itemView.image_picture)
 

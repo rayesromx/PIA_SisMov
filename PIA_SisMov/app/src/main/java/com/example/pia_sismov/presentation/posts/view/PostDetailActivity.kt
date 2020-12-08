@@ -137,6 +137,7 @@ class PostDetailActivity :
         for(img in images){
             if(img.type == "img"){
                 val im = EditableImage("img",img.uri)
+                im.bmpImage = img.bmpImage
                 imagedType.add(im)
             }
         }

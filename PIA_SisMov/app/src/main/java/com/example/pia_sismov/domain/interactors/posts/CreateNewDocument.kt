@@ -1,5 +1,6 @@
 package com.example.pia_sismov.domain.interactors.posts
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
@@ -13,6 +14,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageTask
 import com.google.firebase.storage.UploadTask
+import java.io.ByteArrayOutputStream
 
 class CreateNewDocument (
     private val repository: PostImageRepository
@@ -24,7 +26,14 @@ class CreateNewDocument (
                 .child("Files").child(input.postId).child(input.id)
 
             val uploadTask: StorageTask<*>
-            uploadTask = storageReference.putFile(input.uri!!)
+            if(!input.uri.toString().isBlank())
+                uploadTask = storageReference.putFile(input.uri)
+            else{
+                val baos = ByteArrayOutputStream()
+                input.bmpImage?.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+                val data = baos.toByteArray()
+                uploadTask = storageReference.putBytes(data)
+            }
             uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>>{ task->
                 if(!task.isSuccessful){
                     listener.onError(task.exception?.message!!)

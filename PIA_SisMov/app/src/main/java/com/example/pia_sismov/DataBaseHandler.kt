@@ -2,16 +2,16 @@ package com.example.pia_sismov
 
 import android.content.ContentValues
 import android.content.Context
-import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteDatabase.CursorFactory
+import android.database.sqlite.SQLiteOpenHelper
+import android.graphics.BitmapFactory
 import android.net.Uri
-import android.widget.Toast
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.presentation.account.model.LoginData
 import com.example.pia_sismov.presentation.posts.model.EditableImage
 import java.io.File
+import java.io.IOException
 
 val DATABASENAME = "DATABASE"
 val USESRS_TABLENAME = "Users"
@@ -30,14 +30,17 @@ val COL_DESCR = "description"
 
 val IMG_TABLENAME = "IMGS"
 val COL_URI = "uri"
+val COL_BLOBBMP = "blobbmp"
 val COL_POSTID = "postid"
 val COL_TYPE = "type"
 
 
 
 
-class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASENAME, null,
-    1) {
+class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
+    context, DATABASENAME, null,
+    1
+) {
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableuSERS = "CREATE TABLE " + USESRS_TABLENAME +
                 " (" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -58,6 +61,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
                 " (" + COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 COL_URI + " TEXT," +
                 COL_TYPE + " TEXT," +
+                COL_BLOBBMP + " BLOB," +
                 COL_POSTID + " TEXT)"
 
         db?.execSQL(createTableImgs)
@@ -81,7 +85,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         cursor.close()
         return exists
     }
-    fun insertlOGINData(login: LoginData, user:User) {
+    fun insertlOGINData(login: LoginData, user: User) {
         val database = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_EMAIL, user.email)
@@ -93,7 +97,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         val result = database.insert(USESRS_TABLENAME, null, contentValues)
         database.close()
     }
-    fun udpateLogin(login: LoginData, user:User) {
+    fun udpateLogin(login: LoginData, user: User) {
         val database = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_EMAIL, user.email)
@@ -105,7 +109,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         val _success = database.delete(USESRS_TABLENAME, COL_UID + "=?", arrayOf(user.uid)).toLong()
         //val result = database.update(USESRS_TABLENAME,contentValues, COL_UID + "=? ",arrayOf(user.uid))
         database.close()
-        insertlOGINData(login,user)
+        insertlOGINData(login, user)
     }
     fun readLoginData(): MutableList<LoginData> {
         val list: MutableList<LoginData> = ArrayList()
@@ -113,7 +117,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         val query = "Select * from $USESRS_TABLENAME"
         val result = db.rawQuery(query, null)
         if (result.moveToFirst()) {
-            val user = LoginData("","")
+            val user = LoginData("", "")
             user.email = result.getString(result.getColumnIndex(COL_EMAIL))
             user.password = result.getString(result.getColumnIndex(COL_PWS))
             list.add(user)
@@ -140,13 +144,14 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
     }
 
 
-    fun insertPost(post: Post) {
+    fun insertPost(post: Post):Int {
         val database = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_TITLE, post.title)
         contentValues.put(COL_DESCR, post.description)
         val result = database.insert(POSTS_TABLENAME, null, contentValues)
         database.close()
+        return result.toInt()
     }
 
 
@@ -158,7 +163,12 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         contentValues.put(COL_UID, post.uid)
         contentValues.put(COL_TITLE, post.title)
         contentValues.put(COL_DESCR, post.description)
-        val result = database.update(USESRS_TABLENAME,contentValues,COL_UID+ " == $post.uid ",null)
+        val result = database.update(
+            USESRS_TABLENAME,
+            contentValues,
+            COL_UID + " == $post.uid ",
+            null
+        )
         database.close()
     }
 
@@ -180,24 +190,39 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         return list
     }
 
-    fun deletePost(post:Post): Boolean {
+    fun deletePost(post: Post): Boolean {
         val db = this.writableDatabase
         val _success = db.delete(POSTS_TABLENAME, COL_ID + "=?", arrayOf(post.uid)).toLong()
         db.close()
         return Integer.parseInt("$_success") != -1
     }
 
+    @Throws(IOException::class)
+    private fun readBytes(context: Context, uri: Uri): ByteArray? =
+        context.contentResolver.openInputStream(uri)?.buffered()?.use { it.readBytes() }
+
     fun insertImage(img: EditableImage) {
+       /* var fil = File(img.uri.toString())
+        val fis = FileInputStream(fil)
+        val bytmig = ByteArray(fis.available())
+        fis.read(bytmig)*/
+
+        if(img.uri.toString().isBlank())
+            return
+
+        val bytmig =readBytes(context,img.uri)
+
         val database = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(COL_URI, img.uri.path)
         contentValues.put(COL_POSTID, img.postId)
         contentValues.put(COL_TYPE, img.type)
+        contentValues.put(COL_BLOBBMP, bytmig)
         val result = database.insert(IMG_TABLENAME, null, contentValues)
         database.close()
     }
 
-    fun readImageData(post:Post): MutableList<EditableImage> {
+    fun readImageData(post: Post): MutableList<EditableImage> {
         val list: MutableList<EditableImage> = ArrayList()
         val db = this.readableDatabase
         val query = "Select * from $IMG_TABLENAME "
@@ -206,12 +231,13 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
             do{
                 val postid = result.getString(result.getColumnIndex(COL_POSTID))
                 if(postid == post.uid) {
-                    val urifromdb = result.getString(result.getColumnIndex(COL_URI))
-                    val fl = File(urifromdb)
-                    var uri =Uri.fromFile(fl)
                     val type = result.getString(result.getColumnIndex(COL_TYPE))
-                    val img = EditableImage(type, uri)
+                    val img = EditableImage(type, Uri.EMPTY)
                     img.postId = postid
+
+                    val byte = result.getBlob(result.getColumnIndex(COL_BLOBBMP))
+                    img.bmpImage = BitmapFactory.decodeByteArray(byte, 0, byte.size)
+
                     list.add(img)
                 }
             }while (result.moveToNext())
@@ -220,7 +246,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         return list
     }
 
-    fun deleteDocs(post:Post): Boolean {
+    fun deleteDocs(post: Post): Boolean {
         val db = this.writableDatabase
         val _success = db.delete(IMG_TABLENAME, COL_POSTID + "=?", arrayOf(post.uid)).toLong()
         db.close()

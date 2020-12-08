@@ -65,10 +65,17 @@ class LoginActivity : BaseActivity<ILoginContract.IView, LoginPresenter>(),ILogi
     override fun signIn() {
         val email = etxt_email.text.toString().trim()
         val password = etxt_password.text.toString().trim()
-        if(presenter.checkEmptyFields(email, password))
-            toast(this, "Revisa el email o contrasena")
-        else
-            presenter.signInUserWithEmailAndPassword(email, password)
+
+        if(CustomSessionState.hayInternet) {
+
+            if (presenter.checkEmptyFields(email, password))
+                toast(this, "Revisa el email o contrasena")
+            else
+                presenter.signInUserWithEmailAndPassword(email, password)
+        }
+        else{
+          navigateToMain()
+        }
     }
 
 
