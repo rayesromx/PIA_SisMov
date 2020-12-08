@@ -40,7 +40,8 @@ class MainHomeFragment(
         rootView.btn_search_posts.setOnClickListener{
             var postsToBeFilters = ArrayList<Post>()
             for(post in presenter.postsToBeFiltered){
-                if(post.title.toLowerCase().contains(rootView.etxt_name_search.text.toString().toLowerCase()))
+                if(post.title.toLowerCase().contains(rootView.etxt_name_search.text.toString().toLowerCase()) ||
+                    post.description.toLowerCase().contains(rootView.etxt_name_search.text.toString().toLowerCase()))
                     postsToBeFilters.add(post)
             }
             onPostsLoaded(postsToBeFilters)
