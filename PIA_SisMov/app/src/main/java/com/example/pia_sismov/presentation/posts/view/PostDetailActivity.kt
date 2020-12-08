@@ -9,11 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
-import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.GetAllImagesFromPost
 import com.example.pia_sismov.domain.interactors.posts.SavePost
-import com.example.pia_sismov.presentation.main.view.MainActivity
 import com.example.pia_sismov.presentation.posts.IPostDetailContract
 import com.example.pia_sismov.presentation.posts.adapters.PostDetailImageListAdapter
 import com.example.pia_sismov.presentation.posts.model.EditableImage
@@ -21,10 +19,7 @@ import com.example.pia_sismov.presentation.posts.presenter.PostDetailPresenter
 import com.example.pia_sismov.repos.PostImageRepository
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
-import kotlinx.android.synthetic.main.activity_new_post.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
-import kotlinx.android.synthetic.main.activity_post_detail.view.*
-import java.lang.Exception
 
 class PostDetailActivity :
     BaseActivity<IPostDetailContract.IView, PostDetailPresenter>(), IPostDetailContract.IView {
@@ -38,7 +33,7 @@ class PostDetailActivity :
         super.onCreate(savedInstanceState)
         db = DataBaseHandler(this)
         etxt_detail_title.setText(CustomSessionState.currentPost.title)
-        etxt_detail_description.setText(CustomSessionState.currentPost.title)
+        etxt_detail_description.setText(CustomSessionState.currentPost.description)
 
         btn_detail_save.setOnClickListener{presenter.onPostSaved(CustomSessionState.currentPost)}
         btn_detail_publish.setOnClickListener{
