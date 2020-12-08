@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
+import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
@@ -23,6 +24,7 @@ import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
 import kotlinx.android.synthetic.main.activity_new_post.*
 import kotlinx.android.synthetic.main.activity_post_detail.*
 import kotlinx.android.synthetic.main.activity_post_detail.view.*
+import java.lang.Exception
 
 class PostDetailActivity :
     BaseActivity<IPostDetailContract.IView, PostDetailPresenter>(), IPostDetailContract.IView {
@@ -30,21 +32,39 @@ class PostDetailActivity :
     private val pickImage = 100
     private val PDF = 200
     private var imageUri: Uri? = null
+    lateinit var db: DataBaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        db = DataBaseHandler(this)
         etxt_detail_title.setText(CustomSessionState.currentPost.title)
         etxt_detail_description.setText(CustomSessionState.currentPost.title)
 
         btn_detail_save.setOnClickListener{presenter.onPostSaved(CustomSessionState.currentPost)}
-        btn_detail_publish.setOnClickListener{presenter.onPostLoaded(CustomSessionState.currentPost)}
+        btn_detail_publish.setOnClickListener{
+            try {
+                val parsedInt = CustomSessionState.currentPost.uid.toInt()
+                db.deletePost(CustomSessionState.currentPost)
+            } catch (nfe: NumberFormatException) {
+                // not a valid int
+            }
+            CustomSessionState.currentPost.uid = ""
+            CustomSessionState.currentPost.createdBy = CustomSessionState.currentUser.uid
+            presenter.onPostLoaded(CustomSessionState.currentPost)
+        }
 
         if(!CustomSessionState.isEditingPost){
             btn_load_detail_image.visibility = View.GONE
             btn_load_detail_document.visibility = View.GONE
             btn_detail_save.visibility = View.GONE
             btn_detail_publish.visibility = View.GONE
+        }
+
+        if(!CustomSessionState.hayInteret){
+
+            btn_load_detail_image.isEnabled = false
+            btn_load_detail_document.isEnabled = false
+            btn_detail_publish.isEnabled = false
         }
 
         btn_load_detail_image.setOnClickListener{

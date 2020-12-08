@@ -17,6 +17,7 @@ import com.example.pia_sismov.presentation.posts.adapters.MainHomeAdapter
 import com.example.pia_sismov.presentation.posts.presenter.MainHomePresenter
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
+import kotlinx.android.synthetic.main.main_home_fragment.*
 import kotlinx.android.synthetic.main.main_home_fragment.view.*
 
 
@@ -33,11 +34,20 @@ class MainHomeFragment(
             savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+
         presenter.loadAllPublishedPosts()
+        if(!CustomSessionState.hayInteret){
+            rootView.txtNODATAh.visibility = View.VISIBLE
+            rootView.txtNODATAh.text = "Sin internet"
+        }
         return rootView
     }
 
     override fun onPostsLoaded(posts:List<Post>){
+        if(posts.isEmpty())
+            rootView.txtNODATAh.visibility = View.VISIBLE
+        else
+            rootView.txtNODATAh.visibility = View.GONE
         adapter = MainHomeAdapter(posts, this)
         rootView.rvMainAllPostsFrag.layoutManager = LinearLayoutManager(ctx)
         rootView.rvMainAllPostsFrag.adapter = adapter

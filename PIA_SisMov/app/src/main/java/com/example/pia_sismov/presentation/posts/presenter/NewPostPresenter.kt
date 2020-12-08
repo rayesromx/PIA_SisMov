@@ -34,12 +34,6 @@ class NewPostPresenter(
     }
 
     override fun publish(post: NewPost) {
-        //if(!hayconextionainternet){
-        //    guardarenSQLite()
-        //    return
-        //}
-        //else
-
         createNewPost.execute(post, object:IBaseUseCaseCallBack<Post>{
             override fun onSuccess(data: Post?) {
                 if(!isViewAttached()) return

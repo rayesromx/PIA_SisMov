@@ -155,4 +155,11 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(context, DATABASE
         result.close()
         return list
     }
+
+    fun deletePost(post:Post): Boolean {
+        val db = this.writableDatabase
+        val _success = db.delete(POSTS_TABLENAME, COL_UID + "=?", arrayOf(post.uid.toString())).toLong()
+        db.close()
+        return Integer.parseInt("$_success") != -1
+    }
 }

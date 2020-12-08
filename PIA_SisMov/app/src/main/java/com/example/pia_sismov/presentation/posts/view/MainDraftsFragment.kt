@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
+import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
 import com.example.pia_sismov.UserproigfilkeActivity
 import com.example.pia_sismov.domain.entities.Post
@@ -18,6 +19,8 @@ import com.example.pia_sismov.presentation.posts.presenter.MainDraftPresenter
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
 import kotlinx.android.synthetic.main.main_drafts_fragment.view.*
+import kotlinx.android.synthetic.main.main_home_fragment.*
+import kotlinx.android.synthetic.main.main_home_fragment.view.*
 
 class MainDraftsFragment(
     private val ctx: Context
@@ -25,6 +28,7 @@ class MainDraftsFragment(
     IMainDraftsFragmentContract.IView {
 
     lateinit var adapter: DraftPostFragmentAdapter
+    lateinit var db: DataBaseHandler
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,12 +36,26 @@ class MainDraftsFragment(
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        presenter.loadAllUserDraftPosts()
+        db = DataBaseHandler(ctx)
+        if(!CustomSessionState.hayInteret)
+            onPostsLoaded(ArrayList<Post>())
+        else
+            presenter.loadAllUserDraftPosts()
         return rootView
     }
 
     override fun onPostsLoaded(posts:List<Post>){
-        adapter = DraftPostFragmentAdapter(posts, this)
+        val localposts = db.readpOSTData().toList()
+        val ps = ArrayList<Post>()
+        ps.addAll(posts)
+        ps.addAll(localposts)
+
+        if(ps.isEmpty())
+            rootView.txtNODATA.visibility = View.VISIBLE
+        else
+            rootView.txtNODATA.visibility = View.GONE
+
+        adapter = DraftPostFragmentAdapter(ps, this)
         rootView.rvMainDraftsFrag.layoutManager = LinearLayoutManager(ctx)
         rootView.rvMainDraftsFrag.adapter = adapter
     }

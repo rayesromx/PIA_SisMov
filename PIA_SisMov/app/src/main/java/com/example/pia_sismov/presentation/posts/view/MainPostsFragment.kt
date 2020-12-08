@@ -16,6 +16,8 @@ import com.example.pia_sismov.presentation.posts.adapters.MainPostsFragmentAdapt
 import com.example.pia_sismov.presentation.posts.presenter.MainPostsPresenter
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseFragment
+import kotlinx.android.synthetic.main.main_home_fragment.*
+import kotlinx.android.synthetic.main.main_posts_fragment.*
 import kotlinx.android.synthetic.main.main_posts_fragment.view.*
 
 class MainPostsFragment(
@@ -31,11 +33,20 @@ class MainPostsFragment(
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+
         presenter.loadAllUserPosts()
+        if(!CustomSessionState.hayInteret){
+            rootView.txtNODATAp.visibility = View.VISIBLE
+            rootView.txtNODATAp.text = "Sin internet"
+        }
         return rootView
     }
 
     override fun onPostsLoaded(posts:List<Post>){
+        if(posts.isEmpty())
+            rootView.txtNODATAp.visibility = View.VISIBLE
+        else
+            rootView.txtNODATAp.visibility = View.GONE
         adapter = MainPostsFragmentAdapter(posts,this)
         rootView.rvMainChatFrag.layoutManager = LinearLayoutManager(ctx)
         rootView.rvMainChatFrag.adapter = adapter

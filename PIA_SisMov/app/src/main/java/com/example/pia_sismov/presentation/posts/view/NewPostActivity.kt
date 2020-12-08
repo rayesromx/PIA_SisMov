@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
+import com.example.pia_sismov.DataBaseHandler
 import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
@@ -28,6 +29,7 @@ class NewPostActivity :
     private val pickImage = 100
     private val PDF = 200
     private var imageUri: Uri? = null
+    lateinit var db: DataBaseHandler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +38,13 @@ class NewPostActivity :
         btn_load_document.setOnClickListener{loadFile()}
         btn_publish.setOnClickListener{publishPost()}
         btn_save.setOnClickListener{publishDraft()}
+
+        if(!CustomSessionState.hayInteret){
+            db = DataBaseHandler(this)
+            btn_publish.isEnabled = false
+            btn_load_image.isEnabled = false
+            btn_load_document.isEnabled = false
+        }
     }
 
     override fun getLayout() = R.layout.activity_new_post
@@ -103,6 +112,15 @@ class NewPostActivity :
             presenter.file!!,
             ""
         )
+        if(!CustomSessionState.hayInteret){
+            var p = Post()
+            p.description = post.description
+            p.title = post.title
+            p.uid = "local"
+            db.insertPost(p)
+            finishFrag()
+        }
+        else
         presenter.publish(post)
     }
 
