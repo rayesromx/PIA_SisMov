@@ -40,6 +40,7 @@ class CreateNewDocument (
                     val post = PostImage()
                     post.url = url
                     post.postId = input.postId
+                    post.type = input.type
 
                     repository.save(post, object : IRepository.IRepositoryListener<String> {
                         override fun onSuccess(data: String) {

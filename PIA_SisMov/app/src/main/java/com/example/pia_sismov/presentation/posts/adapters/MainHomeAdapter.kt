@@ -26,7 +26,8 @@ class MainHomeAdapter(
             itemView.itemImgPostImage.setImageResource(R.drawable.ic_launcher_background)
             itemView.itemBtnAction.setText("Ver detalle")
             itemView.itemBtnAction.setOnClickListener{parentView.onPostSelected(post)}
-            itemView.setOnClickListener{parentView.onViewUser(post.createdBy)}
+            itemView.txtPublicadoPor.setText("Creado por " + post.createdByName)
+            itemView.txtPublicadoPor.setOnClickListener{parentView.onViewUser(post.createdBy)}
         }
     }
 

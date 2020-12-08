@@ -34,6 +34,7 @@ class PostDetailActivity :
         db = DataBaseHandler(this)
         etxt_detail_title.setText(CustomSessionState.currentPost.title)
         etxt_detail_description.setText(CustomSessionState.currentPost.description)
+        txt_created_by.setText("Creado por " + CustomSessionState.currentPost.createdByName)
 
         btn_detail_save.setOnClickListener{presenter.onPostSaved(CustomSessionState.currentPost)}
         btn_detail_publish.setOnClickListener{
@@ -53,6 +54,8 @@ class PostDetailActivity :
             btn_load_detail_document.visibility = View.GONE
             btn_detail_save.visibility = View.GONE
             btn_detail_publish.visibility = View.GONE
+        }else{
+            txt_created_by.visibility = View.GONE
         }
 
         if(!CustomSessionState.hayInteret){

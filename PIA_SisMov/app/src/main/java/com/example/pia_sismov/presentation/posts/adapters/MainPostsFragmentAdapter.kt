@@ -7,12 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pia_sismov.R
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.presentation.posts.IMainPostsFragmentContract
-import kotlinx.android.synthetic.main.item_view_mi_publicacion.view.*
-import kotlinx.android.synthetic.main.item_view_post.view.*
-import kotlinx.android.synthetic.main.item_view_post.view.btn_post_action
-import kotlinx.android.synthetic.main.item_view_publicacion.view.itemImgPostImage
-import kotlinx.android.synthetic.main.item_view_publicacion.view.itemTxtPostMessage
-import kotlinx.android.synthetic.main.item_view_publicacion.view.itemTxtPostTitle
+import kotlinx.android.synthetic.main.item_view_publicacion.view.*
 
 class MainPostsFragmentAdapter(
     private val list: List<Post>,
@@ -27,8 +22,9 @@ class MainPostsFragmentAdapter(
             itemView.itemImgPostImage.setImageResource(R.drawable.ic_launcher_background)
             itemView.itemBtnAction.setText("Ver detalle")
             itemView.itemBtnAction.setOnClickListener{parentView.onPostSelected(post)}
-            itemView.setOnClickListener{parentView.onViewUser(post.createdBy)}
-
+            //itemView.setOnClickListener{parentView.onViewUser(post.createdBy)}
+            itemView.txtPublicadoPor.text = post.createdByName
+            itemView.txtPublicadoPor.visibility = View.GONE
         }
     }
 

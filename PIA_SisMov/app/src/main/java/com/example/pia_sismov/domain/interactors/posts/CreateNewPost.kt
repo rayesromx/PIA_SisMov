@@ -1,5 +1,6 @@
 package com.example.pia_sismov.domain.interactors.posts
 
+import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.interactors.*
@@ -16,8 +17,9 @@ class CreateNewPost(
         val post = Post()
         post.title = input.title
         post.description = input.description
-        post.createdBy = input.userid
+        post.createdBy = CustomSessionState.currentUser.uid
         post.datePublished = input.isPublished
+        post.createdByName = CustomSessionState.currentUser.name + " " +  CustomSessionState.currentUser.lastName
 
         repository.save(post,object: IRepository.IRepositoryListener<String>{
             override fun onSuccess(data: String) {

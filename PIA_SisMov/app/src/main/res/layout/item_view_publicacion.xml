@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="12dp"
     card_view:cardCornerRadius="12dp"
     card_view:cardElevation="3dp"
@@ -45,6 +46,20 @@
             app:layout_constraintEnd_toStartOf="@+id/itemImgPostImage"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/itemTxtPostTitle" />
+
+        <TextView
+            android:id="@+id/txtPublicadoPor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="right"
+            android:text="Descripcion"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/itemBtnAction"
+            app:layout_constraintTop_toBottomOf="@+id/itemTxtPostMessage" />
 
         <ImageView
             android:id="@+id/itemImgPostImage"
