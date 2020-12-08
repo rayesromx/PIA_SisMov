@@ -37,10 +37,15 @@ class MainPostsFragment(
             rootView.txtNODATAp.visibility = View.VISIBLE
             rootView.txtNODATAp.text = "Sin internet"
         }
+
+        CustomSessionState.hayInternet = CustomSessionState.isConnectedToNetwork(ctx)
         return rootView
     }
 
     override fun onPostsLoaded(posts:List<Post>){
+        CustomSessionState.hayInternet = CustomSessionState.isConnectedToNetwork(ctx)
+
+
         if(posts.isEmpty())
             rootView.txtNODATAp.visibility = View.VISIBLE
         else

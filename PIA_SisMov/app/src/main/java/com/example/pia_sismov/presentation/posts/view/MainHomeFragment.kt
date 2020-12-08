@@ -46,10 +46,15 @@ class MainHomeFragment(
             }
             onPostsLoaded(postsToBeFilters)
         }
+
+        CustomSessionState.hayInternet = CustomSessionState.isConnectedToNetwork(ctx)
         return rootView
     }
 
     override fun onPostsLoaded(posts:List<Post>){
+        CustomSessionState.hayInternet = CustomSessionState.isConnectedToNetwork(ctx)
+
+
         if(posts.isEmpty())
             rootView.txtNODATAh.visibility = View.VISIBLE
         else

@@ -2,6 +2,7 @@ package com.example.pia_sismov.presentation.main.view
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -65,6 +66,8 @@ class MainActivity : BaseActivity<IMainContract.IView, MainPresenter>(),IMainCon
         startActivity(intent)
         finish()
     }
+
+
 
     override fun getLayout() = R.layout.activity_main
 

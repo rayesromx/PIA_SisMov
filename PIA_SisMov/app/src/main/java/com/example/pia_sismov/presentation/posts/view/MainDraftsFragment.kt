@@ -40,10 +40,16 @@ class MainDraftsFragment(
             onPostsLoaded(ArrayList<Post>())
         else
             presenter.loadAllUserDraftPosts()
+
+
+        CustomSessionState.hayInternet = CustomSessionState.isConnectedToNetwork(ctx)
         return rootView
     }
 
     override fun onPostsLoaded(posts:List<Post>){
+
+        CustomSessionState.hayInternet = CustomSessionState.isConnectedToNetwork(ctx)
+
         val localposts = db.readpOSTData().toList()
         val ps = ArrayList<Post>()
         ps.addAll(posts)
