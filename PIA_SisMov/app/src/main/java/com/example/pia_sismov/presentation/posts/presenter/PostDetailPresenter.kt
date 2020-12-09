@@ -5,11 +5,10 @@ import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
-import com.example.pia_sismov.domain.interactors.posts.CreateNewPost
 import com.example.pia_sismov.domain.interactors.posts.GetAllImagesFromPost
 import com.example.pia_sismov.domain.interactors.posts.SavePost
 import com.example.pia_sismov.presentation.posts.IPostDetailContract
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.shared.presenter.BasePresenter
 import java.lang.Exception
 import java.time.LocalDateTime
@@ -20,8 +19,8 @@ class PostDetailPresenter(
     val createNewDocument: CreateNewDocument
 ): BasePresenter<IPostDetailContract.IView>(), IPostDetailContract.IPresenter {
 
-    var imageList = ArrayList<EditableImage>()
-    var file: EditableImage? = EditableImage("doc",Uri.EMPTY)
+    var imageList = ArrayList<DtoDocument>()
+    var file: DtoDocument? = DtoDocument("doc",Uri.EMPTY)
 
     override fun loadImageFromPost(post: Post){
         getAllImagesFromPost.execute(post, object: IBaseUseCaseCallBack<List<PostImage>> {
@@ -29,14 +28,19 @@ class PostDetailPresenter(
                 if(!isViewAttached()) return
                 imageList.clear()
                 for (item in data!!){
-                    val ei = EditableImage(
+                    val ei = DtoDocument(
                         item.type,
                         Uri.EMPTY,
                         item.uid,
                         item.postId,
-                        item.url
+                        item.url,
+                        null,
+                        item.filename
                     )
-                    imageList.add(ei)
+                    if(item.type == "doc")
+                      file = ei
+                    else
+                        imageList.add(ei)
                 }
                 view!!.onUpdatedImageRV()
             }
@@ -48,15 +52,15 @@ class PostDetailPresenter(
         })
     }
 
-    override fun addImageToList(image: EditableImage) {
+    override fun addImageToList(image: DtoDocument) {
         imageList.add(image)
         view!!.onUpdatedImageRV()
     }
-    override fun removeImageFromList(image: EditableImage) {
+    override fun removeImageFromList(image: DtoDocument) {
         imageList.remove(image)
         view!!.onUpdatedImageRV()
     }
-    override fun loadFile(file: EditableImage) {
+    override fun loadFile(file: DtoDocument) {
         this.file = file
     }
 

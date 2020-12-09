@@ -1,10 +1,16 @@
 package com.example.pia_sismov.presentation.posts.view
 
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.DataBaseHandler
@@ -15,7 +21,7 @@ import com.example.pia_sismov.domain.interactors.posts.GetAllImagesFromPost
 import com.example.pia_sismov.domain.interactors.posts.SavePost
 import com.example.pia_sismov.presentation.posts.IPostDetailContract
 import com.example.pia_sismov.presentation.posts.adapters.PostDetailImageListAdapter
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.posts.presenter.PostDetailPresenter
 import com.example.pia_sismov.repos.PostImageRepository
 import com.example.pia_sismov.repos.PostRepository
@@ -29,6 +35,7 @@ class PostDetailActivity :
     private val PDF = 200
     private var imageUri: Uri? = null
     lateinit var db: DataBaseHandler
+    var myDownloadId : Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,9 +119,20 @@ class PostDetailActivity :
         else {
             presenter.loadImageFromPost(CustomSessionState.currentPost)
         }
+
+        var ctx = this
+        var br = object:BroadcastReceiver(){
+            override fun onReceive(context: Context?, intent: Intent?) {
+                var id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                if(id == myDownloadId){
+                    toast(ctx, "Descarga completa")
+                }
+            }
+        }
+        registerReceiver(br, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
-    override fun onImageDeleted(img: EditableImage) {
+    override fun onImageDeleted(img: DtoDocument) {
         presenter.removeImageFromList(img)
     }
 
@@ -122,21 +140,21 @@ class PostDetailActivity :
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            val img = EditableImage("img",imageUri!!)
+            val img = DtoDocument("img",imageUri!!)
             presenter.addImageToList(img)
         } else if (resultCode == RESULT_OK && requestCode == PDF) {
             imageUri = data?.data
-            val img = EditableImage("doc",imageUri!!)
+            val img = DtoDocument("doc",imageUri!!)
             presenter.loadFile(img)
         }
     }
 
     override fun onUpdatedImageRV() {
         var images = db.readImageData(CustomSessionState.currentPost)
-        var imagedType = ArrayList<EditableImage>()
+        var imagedType = ArrayList<DtoDocument>()
         for(img in images){
             if(img.type == "img"){
-                val im = EditableImage("img",img.uri)
+                val im = DtoDocument("img",img.uri)
                 im.bmpImage = img.bmpImage
                 imagedType.add(im)
             }
@@ -147,6 +165,37 @@ class PostDetailActivity :
         ll.orientation = LinearLayoutManager.HORIZONTAL
         rv_imgv_detail_carrousel.layoutManager = ll
         rv_imgv_detail_carrousel.adapter = adapter
+
+        if(!presenter.file!!.url.isBlank()){
+            if(!CustomSessionState.isEditingPost){
+                btn_load_detail_document.visibility = View.VISIBLE
+                btn_load_detail_document.text = "Descargar " + presenter.file!!.filename
+                btn_load_detail_document.setOnClickListener{downloadFile()}
+            }else{
+                txt_created_by.visibility = View.GONE
+            }
+
+        }
+    }
+
+
+    fun downloadFile(){
+        try {
+            var fn = presenter.file!!.filename.replace(":","_")
+            var request  = DownloadManager.Request(
+                Uri.parse(presenter.file!!.url))
+                .setTitle(presenter.file!!.filename)
+                //.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
+                // .setDescription("Descargando...")
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,fn)
+
+            var dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+            myDownloadId = dm.enqueue(request)
+        }catch(ex:Exception){
+            toast(this,ex.message!!)
+        }
+
     }
 
     override fun finishFrag() {

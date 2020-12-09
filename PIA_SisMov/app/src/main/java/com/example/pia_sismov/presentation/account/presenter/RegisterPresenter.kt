@@ -1,18 +1,14 @@
 package com.example.pia_sismov.presentation.account.presenter
 
 import android.net.Uri
-import android.text.Editable
 import androidx.core.util.PatternsCompat
-import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.IRegisterUserUseCase
-import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.UploadPP
-import com.example.pia_sismov.domain.mappers.register.GetUserFromUserRegister
 import com.example.pia_sismov.presentation.account.IRegisterContract
 import com.example.pia_sismov.presentation.account.model.UserRegisterData
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.shared.presenter.BasePresenter
 import com.example.pia_sismov.repos.IRepository
 import com.example.pia_sismov.repos.UserRepository
@@ -29,7 +25,7 @@ class RegisterPresenter(
             override fun onSuccess(data: User?) {
                 val loggeduser = data!!
                 if(user.image != null && user.image != Uri.EMPTY) {
-                    var im = EditableImage("pp",user.image!!)
+                    var im = DtoDocument("pp",user.image!!)
                     im.postId = loggeduser.uid
                     uploadpp.execute(im, object : IBaseUseCaseCallBack<String> {
                         override fun onSuccess(data: String?) {

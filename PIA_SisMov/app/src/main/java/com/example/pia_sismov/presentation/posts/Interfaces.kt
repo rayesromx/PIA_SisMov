@@ -1,8 +1,7 @@
 package com.example.pia_sismov.presentation.posts
 
 import com.example.pia_sismov.domain.entities.Post
-import com.example.pia_sismov.presentation.posts.model.EditableImage
-import com.example.pia_sismov.presentation.posts.model.NewPost
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.shared.IBasePresenter
 import com.example.pia_sismov.presentation.shared.IBaseView
 
@@ -44,17 +43,17 @@ interface IMainPostsFragmentContract {
 
 interface IPostDetailContract {
     interface IView: IBaseView {
-        fun onImageDeleted(img:EditableImage)
+        fun onImageDeleted(img:DtoDocument)
         fun onUpdatedImageRV()
         fun finishFrag()
     }
 
     interface IPresenter: IBasePresenter<IView> {
         fun loadImageFromPost(post:Post)
-        fun addImageToList(image: EditableImage)
-        fun removeImageFromList(image: EditableImage)
+        fun addImageToList(image: DtoDocument)
+        fun removeImageFromList(image: DtoDocument)
         fun onPostSaved(post: Post)
         fun onPostLoaded(post: Post)
-        fun loadFile(file: EditableImage)
+        fun loadFile(file: DtoDocument)
     }
 }

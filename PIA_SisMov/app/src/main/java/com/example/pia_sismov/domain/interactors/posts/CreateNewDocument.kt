@@ -6,7 +6,7 @@ import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.ICreateNewDocumentUseCase
 import com.example.pia_sismov.domain.interactors.IUploadImagePPUseCase
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.repos.IRepository
 import com.example.pia_sismov.repos.PostImageRepository
 import com.google.android.gms.tasks.Continuation
@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream
 class CreateNewDocument (
     private val repository: PostImageRepository
 ) : ICreateNewDocumentUseCase {
-    override fun execute(input: EditableImage, listener: IBaseUseCaseCallBack<PostImage>) {
+    override fun execute(input: DtoDocument, listener: IBaseUseCaseCallBack<PostImage>) {
 
         if(input.url.isBlank()){
             val storageReference = FirebaseStorage.getInstance().reference
@@ -51,6 +51,8 @@ class CreateNewDocument (
                     post.url = url
                     post.postId = input.postId
                     post.type = input.type
+                    post.extension = input.extension
+                    post.filename = input.filename
 
                     repository.save(post, object : IRepository.IRepositoryListener<String> {
                         override fun onSuccess(data: String) {
@@ -87,7 +89,7 @@ class CreateNewDocument (
 class UploadPP (
     private val repository: PostImageRepository
 ) : IUploadImagePPUseCase {
-    override fun execute(input: EditableImage, listener: IBaseUseCaseCallBack<String>) {
+    override fun execute(input: DtoDocument, listener: IBaseUseCaseCallBack<String>) {
         val storageReference = FirebaseStorage.getInstance().reference
             .child("Files").child("UsersPPs").child(input.postId)
 

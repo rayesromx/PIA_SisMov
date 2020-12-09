@@ -6,17 +6,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pia_sismov.R
 import com.example.pia_sismov.presentation.posts.INewPostContract
-import com.example.pia_sismov.presentation.posts.IPostDetailContract
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import kotlinx.android.synthetic.main.image_carrousel_item_editable.view.*
 
 class NewPostImageListAdapter(
-    val imageList: List<EditableImage>,
+    val imageList: List<DtoDocument>,
     val parentView: INewPostContract.IView
 )  : RecyclerView.Adapter<NewPostImageListAdapter.ViewHolder>(){
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindData(img: EditableImage) {
+        fun bindData(img: DtoDocument) {
             itemView.image_picture.setImageURI(img.uri)
             itemView.btn_delete_image_from_list.setOnClickListener{
                 parentView.onImageDeleted(img)

@@ -1,14 +1,13 @@
 package com.example.pia_sismov.presentation.posts.presenter
 
 import android.net.Uri
-import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.interactors.IBaseUseCaseCallBack
 import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.CreateNewPost
 import com.example.pia_sismov.presentation.posts.INewPostContract
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.posts.model.NewPost
 import com.example.pia_sismov.presentation.shared.presenter.BasePresenter
 
@@ -17,20 +16,34 @@ class NewPostPresenter(
     val createNewDocument: CreateNewDocument
 ): BasePresenter<INewPostContract.IView>(), INewPostContract.IPresenter {
 
-    var imageList = ArrayList<EditableImage>()
-    var file: EditableImage? = EditableImage("doc",Uri.EMPTY)
-    override fun addImageToList(image: EditableImage) {
+    var imageList = ArrayList<DtoDocument>()
+    var file: DtoDocument? = DtoDocument("doc",Uri.EMPTY)
+    override fun addImageToList(image: DtoDocument) {
         imageList.add(image)
         view!!.onUpdatedImageRV()
     }
 
-    override fun removeImageFromList(image: EditableImage) {
+    override fun removeImageFromList(image: DtoDocument) {
         imageList.remove(image)
         view!!.onUpdatedImageRV()
     }
 
-    override fun loadFile(file: EditableImage) {
+    override fun loadFile(file: DtoDocument) {
         this.file = file
+    }
+
+    private fun uploadFile(input:DtoDocument){
+        createNewDocument.execute(input, object : IBaseUseCaseCallBack<PostImage> {
+            override fun onSuccess(data: PostImage?) {
+                if (!isViewAttached()) return
+                view!!.showError("${input.type} guardado exitosamente")
+            }
+
+            override fun onError(error: String) {
+                if (!isViewAttached()) return
+                view!!.showError(error)
+            }
+        })
     }
 
     override fun publish(post: NewPost) {
@@ -39,31 +52,11 @@ class NewPostPresenter(
                 if(!isViewAttached()) return
                 if(file != null && file!!.uri != Uri.EMPTY) {
                     file!!.postId = data!!.uid
-                    createNewDocument.execute(file!!, object : IBaseUseCaseCallBack<PostImage> {
-                        override fun onSuccess(data: PostImage?) {
-                            if (!isViewAttached()) return
-                            view!!.showError("Imagen guardada exitosamente")
-                        }
-
-                        override fun onError(error: String) {
-                            if (!isViewAttached()) return
-                            view!!.showError(error)
-                        }
-                    })
+                    uploadFile(file!!)
                 }
                 for(img in imageList){
                     img.postId = data!!.uid
-                    createNewDocument.execute(img!!,object:IBaseUseCaseCallBack<PostImage>{
-                        override fun onSuccess(data: PostImage?) {
-                            if(!isViewAttached()) return
-                            view!!.showError("Documento guardado exitosamente")
-                        }
-
-                        override fun onError(error: String) {
-                            if(!isViewAttached()) return
-                            view!!.showError(error)
-                        }
-                    })
+                    uploadFile(img)
                 }
                 Thread.sleep(250)
                 view!!.finishFrag()

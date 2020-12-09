@@ -107,7 +107,7 @@ abstract class FireBaseRepository<T>(
         saveData(dbRef,model,listener)
     }
 
-    protected fun saveData(dbRef: DatabaseReference, model: T, listener: IRepository.IRepositoryListener<String>) {
+    protected open fun saveData(dbRef: DatabaseReference, model: T, listener: IRepository.IRepositoryListener<String>) {
      //   Thread.sleep(500)
         dbRef.setValue(model.getHastMap())
             .addOnCompleteListener {

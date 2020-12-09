@@ -9,8 +9,7 @@ import android.net.Uri
 import com.example.pia_sismov.domain.entities.Post
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.presentation.account.model.LoginData
-import com.example.pia_sismov.presentation.posts.model.EditableImage
-import java.io.File
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import java.io.IOException
 
 val DATABASENAME = "DATABASE"
@@ -241,7 +240,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
     private fun readBytes(context: Context, uri: Uri): ByteArray? =
         context.contentResolver.openInputStream(uri)?.buffered()?.use { it.readBytes() }
 
-    fun insertImage(img: EditableImage) {
+    fun insertImage(img: DtoDocument) {
        /* var fil = File(img.uri.toString())
         val fis = FileInputStream(fil)
         val bytmig = ByteArray(fis.available())
@@ -262,8 +261,8 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
         database.close()
     }
 
-    fun readImageData(post: Post): MutableList<EditableImage> {
-        val list: MutableList<EditableImage> = ArrayList()
+    fun readImageData(post: Post): MutableList<DtoDocument> {
+        val list: MutableList<DtoDocument> = ArrayList()
         val db = this.readableDatabase
         val query = "Select * from $IMG_TABLENAME "
         val result = db.rawQuery(query, null)
@@ -272,7 +271,7 @@ class DataBaseHandler(var context: Context) : SQLiteOpenHelper(
                 val postid = result.getString(result.getColumnIndex(COL_POSTID))
                 if(postid == post.uid) {
                     val type = result.getString(result.getColumnIndex(COL_TYPE))
-                    val img = EditableImage(type, Uri.EMPTY)
+                    val img = DtoDocument(type, Uri.EMPTY)
                     img.postId = postid
 
                     val byte = result.getBlob(result.getColumnIndex(COL_BLOBBMP))

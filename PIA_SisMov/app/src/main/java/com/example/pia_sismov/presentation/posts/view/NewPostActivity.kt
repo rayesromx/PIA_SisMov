@@ -13,13 +13,14 @@ import com.example.pia_sismov.domain.interactors.posts.CreateNewDocument
 import com.example.pia_sismov.domain.interactors.posts.CreateNewPost
 import com.example.pia_sismov.presentation.posts.INewPostContract
 import com.example.pia_sismov.presentation.posts.adapters.NewPostImageListAdapter
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.posts.model.NewPost
 import com.example.pia_sismov.presentation.posts.presenter.NewPostPresenter
 import com.example.pia_sismov.repos.PostImageRepository
 import com.example.pia_sismov.repos.PostRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
 import kotlinx.android.synthetic.main.activity_new_post.*
+import java.io.File
 import java.time.LocalDateTime
 
 class NewPostActivity :
@@ -62,25 +63,33 @@ class NewPostActivity :
 
     override fun loadFile() {
         val intent = Intent()
-        intent.setType ("pdf/*")
-        intent.setAction(Intent.ACTION_GET_CONTENT)
-        startActivityForResult(Intent.createChooser(intent, "Select PDF"), PDF)
+        intent.type = "*/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Selecciona archivo"), PDF)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == pickImage) {
             imageUri = data?.data
-            val img = EditableImage("img",imageUri!!)
+            val img = DtoDocument("img",imageUri!!)
+            val f = File(imageUri!!.path!!)
+            img.filename = f.name
+            img.extension = f.extension
             presenter.addImageToList(img)
+
         } else if (resultCode == RESULT_OK && requestCode == PDF) {
             imageUri = data?.data
-            val img = EditableImage("doc",imageUri!!)
-            presenter.loadFile(img)
+            val doc = DtoDocument("doc",imageUri!!)
+            val f = File(imageUri!!.path!!)
+            doc.filename = f.name
+            doc.extension = f.extension
+            presenter.loadFile(doc)
+
         }
     }
 
-    override fun onImageDeleted(img: EditableImage){
+    override fun onImageDeleted(img: DtoDocument){
         presenter.removeImageFromList(img)
     }
 
@@ -123,13 +132,6 @@ class NewPostActivity :
             val postnewid = db.insertPost(p)
             //val posts = db.readpOSTData()
 
-           //ar postFromDb = Post()
-            //for (pdb in posts){
-            //    if(pdb.title == p.title && pdb.description == p.description){
-            //        postFromDb = pdb
-            //        break
-            //    }
-           // }
             //guidardar en db las imagenes
             for (img in presenter.imageList){
                 img.postId = postnewid.toString()

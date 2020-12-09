@@ -12,7 +12,6 @@ import com.example.pia_sismov.presentation.account.IRegisterContract
 import com.example.pia_sismov.presentation.account.model.UserRegisterData
 import com.example.pia_sismov.presentation.account.presenter.RegisterPresenter
 import com.example.pia_sismov.presentation.main.view.MainActivity
-import com.example.pia_sismov.presentation.posts.model.EditableImage
 import com.example.pia_sismov.repos.PostImageRepository
 import fcfm.lmad.poi.ChatPoi.presentation.shared.view.BaseActivity
 import kotlinx.android.synthetic.main.activity_register.*

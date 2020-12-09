@@ -1,28 +1,23 @@
 package com.example.pia_sismov.presentation.posts.adapters
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.pia_sismov.CustomSessionState
 import com.example.pia_sismov.R
 import com.example.pia_sismov.presentation.posts.IPostDetailContract
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_post_detail.*
-import kotlinx.android.synthetic.main.activity_post_detail.view.*
 import kotlinx.android.synthetic.main.image_carrousel_item_editable.view.*
-import java.io.File
 
 class PostDetailImageListAdapter(
-    val imageList: List<EditableImage>,
+    val imageList: List<DtoDocument>,
     val parentView: IPostDetailContract.IView
 )  : RecyclerView.Adapter<PostDetailImageListAdapter.ViewHolder>(){
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindData(img: EditableImage) {
+        fun bindData(img: DtoDocument) {
             if(img.url.isEmpty()){
 
                itemView.image_picture.setImageBitmap( img.bmpImage)

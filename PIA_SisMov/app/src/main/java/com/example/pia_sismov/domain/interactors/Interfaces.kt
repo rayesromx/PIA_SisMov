@@ -5,7 +5,7 @@ import com.example.pia_sismov.domain.entities.PostImage
 import com.example.pia_sismov.domain.entities.User
 import com.example.pia_sismov.presentation.account.model.LoginData
 import com.example.pia_sismov.presentation.account.model.UserRegisterData
-import com.example.pia_sismov.presentation.posts.model.EditableImage
+import com.example.pia_sismov.presentation.posts.model.DtoDocument
 import com.example.pia_sismov.presentation.posts.model.NewPost
 
 interface IBaseUseCaseCallBack<Response> {
@@ -32,8 +32,8 @@ interface IGetLoggedUserDataUseCase: IBaseUseCase<User> {}
 //post interactor
 interface ICreateNewPostUseCase: IBaseUseCaseWithInput<NewPost, Post> {}
 interface ISavePostUseCase: IBaseUseCaseWithInput<Post, Post> {}
-interface ICreateNewDocumentUseCase: IBaseUseCaseWithInput<EditableImage, PostImage> {}
-interface IUploadImagePPUseCase: IBaseUseCaseWithInput<EditableImage, String> {}
+interface ICreateNewDocumentUseCase: IBaseUseCaseWithInput<DtoDocument, PostImage> {}
+interface IUploadImagePPUseCase: IBaseUseCaseWithInput<DtoDocument, String> {}
 
 interface IGetAllPublishedPostsFromOtherUseCase: IBaseUseCase<List<Post>> {}
 interface IGetAllPublishedPostsFromUserUseCase: IBaseUseCase<List<Post>> {}
